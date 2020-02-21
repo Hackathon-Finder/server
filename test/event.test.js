@@ -8,6 +8,7 @@ const { Team, Event, User} = require('../models/index')
 var ownerid = null
 var teamid = null
 var eventid = null
+var token = null
 var teamOwnerId = null
 
 after(function(){
@@ -33,10 +34,10 @@ before(function(){
     return User.create({
         organization: 'Hacktiv8',
         role: 'organizer',
-        password: 'sera',
-        name: 'sera',
-        email: 'serafim@mail.com',
-        hp: 087855727464,
+        password: 'secret',
+        name: 'bram',
+        email: 'bram@mail.com',
+        hp: "087855727464",
         skillset: [],
         status: 'available',
         summary: 'aku sangat hebat',
@@ -48,10 +49,10 @@ before(function(){
         return User.create({
             organization: '',
             role: 'user',
-            password: 'kenny',
-            name: 'kenny',
-            email: 'kenny@mail.com',
-            hp: 087855727466,
+            password: 'secret',
+            name: 'nuel',
+            email: 'nuel@mail.com',
+            hp: "087855727466",
             skillset: [],
             status: 'available',
             summary: 'aku sangat hebat',
@@ -68,11 +69,28 @@ before(function(){
 })
 
 describe("Event CRUD", function(){
+    // inital login
+    before(function(done){
+        chai.request(app)
+        .post('/users/login')
+        .send({
+            email: 'serafim@mail.com',
+            password: 'secret',
+        })
+        .then(function(res){
+            token = res.body.token
+            done()
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+    })
     describe("/POST create an event", function(){
         it("should return an object with status code 201", function(done){
             chai
                 .request(app)
                 .post('/events')
+                .set('token', token)
                 .send({
                     title:'Hacktiv8',
                     summary:'lomba ngoding yang sangat seru',
@@ -107,6 +125,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .get('/events')
+                .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('array')
@@ -120,7 +139,7 @@ describe("Event CRUD", function(){
                     expect(res.body[0]).to.have.property('teams')
                     expect(res.body[0]).to.have.property('applicants')
                     expect(res.body[0]).to.have.property('pictures')
-                    expect(res.body.length).to.equal(1)
+                    expect(res.body.length).to.equal(2)
                     done()
                 })
                 .catch(err=>{
@@ -133,6 +152,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .get('/events/'+eventid)
+                .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('object')
@@ -158,6 +178,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .put('/events/update/'+eventid)
+                .set('token', token)
                 .send({
                     title:'Loyal-Fox',
                     summary:'lomba ngoding yang lumayan seru',
@@ -212,6 +233,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .patch('/events/addapplicants/'+eventid)
+                .set('token', token)
                 .send({
                     teamId: teamid
                 })
@@ -230,6 +252,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .patch('/events/addteam/'+eventid)
+                .set('token', token)
                 .send({
                     teamId: teamid
                 })
@@ -248,6 +271,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .patch('/events/removeteam/'+eventid)
+                .set('token', token)
                 .send({
                     teamId: teamid
                 })
@@ -266,6 +290,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .patch('/events/removeapplicants/'+eventid)
+                .set('token', token)
                 .send({
                     teamId: teamid
                 })
@@ -286,6 +311,7 @@ describe("Event CRUD", function(){
             chai
                 .request(app)
                 .delete('/events/delete/'+eventid)
+                .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('object')
