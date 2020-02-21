@@ -15,9 +15,11 @@ function teamAuthorization(req,res,next){
 }
 
 function eventAuthorizaton(req,res,next){
+    console.log('sampai')
     Event.findById({_id: req.params.eventId})
     .then(data=>{
         if(data.ownerId==req.payload.userId){
+            console.log('masuk auth')
             next()
         }else{
             res.status(403).json({

@@ -34,8 +34,8 @@ before(function(){
     return User.create({
         organization: 'Hacktiv8',
         role: 'organizer',
-        password: 'secret',
         name: 'bram',
+        password: 'secret',
         email: 'bram@mail.com',
         hp: "087855727464",
         skillset: [],
@@ -74,8 +74,8 @@ describe("Event CRUD", function(){
         chai.request(app)
         .post('/users/login')
         .send({
-            email: 'serafim@mail.com',
             password: 'secret',
+            email: 'bram@mail.com',
         })
         .then(function(res){
             token = res.body.token
