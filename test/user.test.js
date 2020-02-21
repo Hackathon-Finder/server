@@ -92,7 +92,6 @@ describe('USER ROUTES', function () {
                         expect(res.body.user.skillset.length).to.equal(0)
                         expect(res.body.user.review.length).to.equal(0)
                         expect(res.body.user.password).to.not.equal(registerData.password)
-
                         done()
                     })
                     .catch(err => {
@@ -516,7 +515,6 @@ describe('USER ROUTES', function () {
                 .then(function (res) {
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('array')
-                    expect(res.body.length).to.equal(2)
                     for (let obj of res.body) {
                         expect(obj).to.not.have.property('password')
                         expect(obj).to.have.property('summary')

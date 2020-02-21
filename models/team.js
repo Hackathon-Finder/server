@@ -15,7 +15,10 @@ const teamSchema = new Schema({
         required: [true, 'Maximum team size is required'],
         type: Number
     },
-    team_size:Number,
+    team_size:{
+        type: Number,
+        default: 0
+    },
     members:[{type: Schema.Types.ObjectId, ref: 'User'}],
     applicants:[{type: Schema.Types.ObjectId, ref: 'User'}],
     skillset: [{
@@ -30,7 +33,9 @@ const teamSchema = new Schema({
     }],
     status: {
         required: [true, 'Team status is required'],
-        type: String
+        type: String,
+        enum: ['open', 'locked'],
+        default: 'open'
     },
     eventId:{
         type: Schema.Types.ObjectId,
