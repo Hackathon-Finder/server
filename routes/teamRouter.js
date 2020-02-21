@@ -2,6 +2,9 @@
 const express = require('express')
 const router = express.Router()
 const Team = require('../controllers/teamController')
+const authentication = require('../middlewares/authentication')
+
+router.use('/', authentication)
 
 router.get('/', Team.findAll)
 router.post('/', Team.create)

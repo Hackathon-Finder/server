@@ -3,9 +3,11 @@ const { Team } = require('../models')
 
 class teamController {
     static create(req,res,next){
-        const {name,ownerId,max_size,skillset,eventId} = req.body
+        const {name,max_size,skillset,eventId} = req.body
         Team.create({
-            name,ownerId,max_size,
+            name,
+            ownerId: req.payload.userId,
+            max_size,
             team_size: 0,
             members: [],
             applicants: [],
@@ -29,7 +31,6 @@ class teamController {
         }).catch(next)
     }
     static findOne(req,res,next){
-        console.log('masuk sini')
         Team.findById({_id: req.params.teamId})
         .then(data=>{
             if(data){
@@ -42,7 +43,6 @@ class teamController {
         }).catch(next)
     }
     static update(req,res,next){
-        console.log('masuk sini')
         Team.findByIdAndUpdate({
             _id: req.params.teamId
         },req.body,{ new: true })

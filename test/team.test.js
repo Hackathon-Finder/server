@@ -5,10 +5,10 @@ const app = require('../app')
 chai.use(chaiHttp)
 const expect = chai.expect
 const { User,Event,Team } = require('../models/index')
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTMzOTYzZDY5Y2U5NjE2YzU4Zjc0ZmIiLCJlbWFpbCI6IjEyM0BtYWlsLmNvbSIsImlhdCI6MTU4MDQzOTEwMX0.jopyUcw_jrFrjcR6Ow3lJsDp9pCcLOBJU8iKmebyPaA'
 var ownerid = ''
 var eventid = ''
 var memberid = ''
+var token=null
 
 after(function(){
     return User.deleteMany({})
@@ -33,10 +33,10 @@ before(function(){
     return User.create({
         organization: '',
         role: 'user',
-        password: 'sera',
-        name: 'sera',
         email: 'serafim@mail.com',
-        hp: 087855727464,
+        password: 'secret',
+        name: 'sera',
+        hp: "087855727464",
         skillset: [{
             skill: 'JavaScript',
             level: 4
@@ -65,7 +65,7 @@ before(function(){
         return User.create({
             organization: '',
             role: 'user',
-            password: 'kenny',
+            password: 'kenny1',
             name: 'kenny',
             email: 'kenny@mail.com',
             hp: 087855727466,
@@ -89,12 +89,28 @@ before(function(){
 
 describe("Team's CRUD", function(){
     let teamid=null
+    // inital login
+    before(function(done){
+        chai.request(app)
+        .post('/users/login')
+        .send({
+            email: 'serafim@mail.com',
+            password: 'secret',
+        })
+        .then(function(res){
+            token = res.body.token
+            done()
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+    })
     describe("/POST Create Team Success", function(){
         it('should send an object with status code 201',function(done){
             chai
                 .request(app)
                 .post('/teams')
-                // .set('token', token)
+                .set('token', token)
                 .send({
                     name: 'team',
                     ownerId: ownerid,
@@ -143,7 +159,7 @@ describe("Team's CRUD", function(){
             chai
                 .request(app)
                 .get('/teams')
-                // .set('token', token)
+                .set('token', token)
                 .then(res=>{
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('array')
@@ -166,7 +182,7 @@ describe("Team's CRUD", function(){
             chai
                 .request(app)
                 .get('/teams/'+teamid)
-                // .set('token', token)
+                .set('token', token)
                 .then(res=>{
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('object')
@@ -192,6 +208,7 @@ describe("Team's CRUD", function(){
             chai
                 .request(app)
                 .put('/teams/update/'+teamid)
+                .set('token', token)
                 .send({
                     name: 'name update',
                     max_size: 10,
@@ -200,7 +217,6 @@ describe("Team's CRUD", function(){
                         level: 4
                     }]
                 })
-                // .set('token', token)
                 .then(res=>{
                     console.log(res.body, 'body')
                     expect(res.body).to.be.an('object')
@@ -222,7 +238,7 @@ describe("Team's CRUD", function(){
             chai
                 .request(app)
                 .patch('/teams/status/'+teamid)
-                // .set('token', token)
+                .set('token', token)
                 .send({
                     status: 'locked'
                 })
@@ -243,7 +259,7 @@ describe("Team's CRUD", function(){
             chai
                 .request(app)
                 .patch('/teams/addmember/'+teamid)
-                // .set('token', token)
+                .set('token', token)
                 .send({
                     userId: memberid
                 })
@@ -265,7 +281,7 @@ describe("Team's CRUD", function(){
             chai
                 .request(app)
                 .patch('/teams/removemember/'+teamid)
-                // .set('token', token)
+                .set('token', token)
                 .send({
                     userId: memberid
                 })
@@ -287,7 +303,7 @@ describe("Team's CRUD", function(){
             chai
                 .request(app)
                 .delete('/teams/'+teamid)
-                // .set('token', token)
+                .set('token', token)
                 .then(res=>{
                     expect(res).to.have.status(200)
                     done()
