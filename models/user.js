@@ -1,5 +1,6 @@
 
 const { Schema, model } = require('mongoose')
+const { hashPassword } = require('../helpers/bcrypt')
 
 const userSchema = new Schema({
     organization: {
@@ -77,6 +78,12 @@ const userSchema = new Schema({
             type: String
         }
     }]
+})
+
+userSchema.pre("save", function(next){
+    let hashedPass = hashPassword(this.password)
+    this.password = hashedPass
+    next()
 })
 
 const User = model('User', userSchema)
