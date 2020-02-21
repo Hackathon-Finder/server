@@ -218,7 +218,6 @@ describe("Team's CRUD", function(){
                     }]
                 })
                 .then(res=>{
-                    console.log(res.body, 'body')
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
                     expect(res.body.name).to.equal('name update')

@@ -5,13 +5,12 @@ const { checkPassword } = require('../helpers/bcrypt')
 
 class userController {
     static register(req, res, next) {
-        let { name, role, password, email, hp } = req.body
+        let { name, role, password, email } = req.body
         User.create({
             name,
             role,
             password,
-            email,
-            hp
+            email
         })
             .then(registered => {
                 let payload = {
@@ -66,6 +65,42 @@ class userController {
             .catch(err => {
                 next(err)
             })
+    }
+
+    static glogin(req,res,next){
+        let userData = {
+            name: req.payload.name,
+            email: req.payload.email,
+            pict: req.payload.picture,
+            password: process.env.DEFAULT_PASS,
+            role: req.body.role
+        }
+        User.findOne({
+            email: userData.email
+        })
+        .then(user=>{
+            if(user){
+                return user
+            }
+            else {
+                return User.create(userData)
+            }
+        })
+        .then(result=>{
+            let payload = {
+                userId: result._id
+            }
+            let token = generateToken(payload)
+            let user = { ...result._doc }
+            delete user.password
+            res.status(201).json({
+                token,
+                user
+            })
+        })
+        .catch(err=>{
+            next(err)
+        })
     }
 
     static update(req, res, next) {

@@ -42,7 +42,7 @@ const userSchema = new Schema({
     },
     hp: {
         type: String,
-        required: [true, 'Phone is required']
+        default: ''
     },
     skillset: [{
         skill: {

@@ -12,16 +12,14 @@ let registerData = {
     name: 'testUser',
     role: 'user',
     password: 'password',
-    email: 'testUser@mail.com',
-    hp: '08123456789'
+    email: 'testUser@mail.com'
 }
 
 let registerOrganizer = {
     name: 'organizer',
     role: 'organizer',
     password: 'password1',
-    email: 'organizer@mail.com',
-    hp: '088889888898'
+    email: 'organizer@mail.com'
 }
 
 let loginData = {
@@ -40,8 +38,7 @@ before(function (done) {
         name: 'user1',
         role: 'user',
         password: 'secret1',
-        email: 'user1@mail.com',
-        hp: '081122334455'
+        email: 'user1@mail.com'
     })
         .then(created => {
             initialUserId = created._id
@@ -81,12 +78,12 @@ describe('USER ROUTES', function () {
                         expect(res.body.user).to.be.an('object')
                         expect(res.body.user).to.have.property('_id')
                         expect(res.body.user.summary).to.equal('')
+                        expect(res.body.user.hp).to.equal('')
                         expect(res.body.user.status).to.equal('available')
                         expect(res.body.user.pict).to.equal('https://picsum.photos/500')
                         expect(res.body.user.name).to.equal(registerData.name)
                         expect(res.body.user.role).to.equal(registerData.role)
                         expect(res.body.user.email).to.equal(registerData.email)
-                        expect(res.body.user.hp).to.equal(registerData.hp)
                         expect(res.body.user.skillset).to.be.an('array')
                         expect(res.body.user.review).to.be.an('array')
                         expect(res.body.user.skillset.length).to.equal(0)
@@ -151,25 +148,6 @@ describe('USER ROUTES', function () {
                         expect(res.body).to.be.an('object')
                         expect(res.body.code).to.equal(400)
                         expect(res.body.errors[0]).to.equal('Password is required')
-
-                        done()
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
-            })
-            it('should return error with status 400 caused by empty phone', function (done) {
-                const withoutHp = { ...registerData }
-                delete withoutHp.hp
-                chai.request(app)
-                    .post('/users/register')
-                    .send(withoutHp)
-                    .then(function (res) {
-
-                        expect(res).to.have.status(400)
-                        expect(res.body).to.be.an('object')
-                        expect(res.body.code).to.equal(400)
-                        expect(res.body.errors[0]).to.equal('Phone is required')
 
                         done()
                     })
@@ -254,12 +232,12 @@ describe('USER ROUTES', function () {
                         expect(res.body.user).to.be.an('object')
                         expect(res.body.user).to.have.property('_id')
                         expect(res.body.user.summary).to.equal('')
+                        expect(res.body.user.hp).to.equal('')
                         expect(res.body.user.status).to.equal('available')
                         expect(res.body.user.pict).to.equal('https://picsum.photos/500')
                         expect(res.body.user.name).to.equal(registerData.name)
                         expect(res.body.user.role).to.equal(registerData.role)
                         expect(res.body.user.email).to.equal(loginData.email)
-                        expect(res.body.user.hp).to.equal(registerData.hp)
                         expect(res.body.user.skillset).to.be.an('array')
                         expect(res.body.user.review).to.be.an('array')
                         expect(res.body.user.skillset.length).to.equal(0)
@@ -459,23 +437,6 @@ describe('USER ROUTES', function () {
                         expect(res.body).to.be.an('object')
                         expect(res.body.code).to.equal(400)
                         expect(res.body.errors[0]).to.equal('Name is required')
-
-                        done()
-                    })
-            })
-            it('should return error with status code 400 caused empty phone', function (done) {
-                const emptyHp = { ...updateData }
-                emptyHp.hp = ''
-                chai.request(app)
-                    .patch('/users')
-                    .set('token', token)
-                    .send(emptyHp)
-                    .then(function (res) {
-
-                        expect(res).to.have.status(400)
-                        expect(res.body).to.be.an('object')
-                        expect(res.body.code).to.equal(400)
-                        expect(res.body.errors[0]).to.equal('Phone is required')
 
                         done()
                     })
