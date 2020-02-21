@@ -245,7 +245,7 @@ describe("Team's CRUD", function(){
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
                     expect(res.body.status).to.equal('locked')
-                    // console.log(res,'===')
+                    expect(res.body.name).to.equal('name update')
                     done()
                 })
                 .catch(err=>{
