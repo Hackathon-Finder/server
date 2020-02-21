@@ -29,10 +29,16 @@ const teamSchema = new Schema({
     team_size:Number,
     members:[{type: Schema.Types.ObjectId, ref: 'User'}],
     applicants:[{type: Schema.Types.ObjectId, ref: 'User'}],
-    skillset: {
-        type: Array,
-        required: [true, 'Team skillset is required']
-    },
+    skillset: [{
+        skill: {
+            type: String
+        }, 
+        level: {
+            type: Number,
+            min: 1,
+            max: 4
+        }
+    }],
     status: {
         required: [true, 'Team status is required'],
         type: String
