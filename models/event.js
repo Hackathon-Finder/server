@@ -13,7 +13,8 @@ const eventSchema = new Schema({
     status:{
         type: String,
         enum: ['start','ongoing','end'],
-        required: true
+        required: true,
+        default: 'start'
     },
     team_size: {
         type: Number,
@@ -29,7 +30,8 @@ const eventSchema = new Schema({
     },
     pictures:{
         type: Array,
-        required: [true, 'Event picture is required']
+        required: [true, 'Event picture is required'],
+        default: ['https://picsum.photos/500']
     },
     date:{
         type: Array,
