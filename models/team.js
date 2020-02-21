@@ -1,17 +1,6 @@
 
 const { Schema, model } = require('mongoose')
 
-// Teams:
-//   name: string
-//   owner: id user
-//   max_size: event_size
-//   members: [id_user]
-//   applicants: [id_user]
-//   team_size: team_size(Event).length
-//   skillset: []
-//   status: string
-//   event: id_event
-
 const teamSchema = new Schema({
     name: {
         required: [true, 'Team name is required'],
