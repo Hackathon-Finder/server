@@ -14,9 +14,7 @@ class teamController {
             eventId
         }).then(data=>{
             res.status(201).json(data)
-        }).catch(err=>{
-            res.status(400).json(err)
-        })
+        }).catch(next)
     }
     static findAll(req,res,next){
         Team.find()
@@ -28,11 +26,10 @@ class teamController {
                     message: "No team in this event"
                 })
             }
-        }).catch(err=>{
-            res.status(400).json(err)
-        })
+        }).catch(next)
     }
     static findOne(req,res,next){
+        console.log('masuk sini')
         Team.findById({_id: req.params.teamId})
         .then(data=>{
             if(data){
@@ -42,11 +39,10 @@ class teamController {
                     message: "Team does not exist"
                 })
             }
-        }).catch(err=>{
-            res.status(400).json(err)
-        })
+        }).catch(next)
     }
     static update(req,res,next){
+        console.log('masuk sini')
         Team.findByIdAndUpdate({
             _id: req.params.teamId
         },req.body,{ new: true })
@@ -54,7 +50,7 @@ class teamController {
             res.status(200).json(data)
         })
         .catch(err=>{
-            res.status(400).json(err)
+            next(err)
         })
     }
     static addMember(req,res,next){
@@ -75,9 +71,7 @@ class teamController {
         .then(data=>{
             res.status(200).json(data)
         })
-        .catch(err=>{
-            res.status(400).json(err)
-        })
+        .catch(next)
     }
     static removeMember(req,res,next){
         Team.findById({_id: req.params.teamId})
@@ -95,25 +89,21 @@ class teamController {
             }
         }).then(data=>{
             res.status(200).json(data)
-        }).catch(err=>{
-            res.status(400).json(err)
-        })
+        }).catch(next)
     }
     static deleteTeam(req,res,next){
         Team.findByIdAndDelete({_id: req.params.teamId})
         .then(data=>{
             res.status(200).json(data)
         })
-        .catch(err=>{
-            res.status(400).json(err)
-        })
+        .catch(next)
     }
     static updateStatus(req,res,next){
         Team.findByIdAndUpdate({_id: req.params.teamId}, {status: req.body.status}, { new: true })
         .then(data=>{
             res.status(200).json(data)
         })
-        .catch()
+        .catch(next)
     }
 }
 
