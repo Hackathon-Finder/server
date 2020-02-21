@@ -2,6 +2,9 @@
 const express = require('express')
 const router = express.Router()
 const Event = require('../controllers/eventController')
+const authentication = require('../middlewares/authentication')
+
+router.use('/', authentication)
 
 router.post('/', Event.create)
 router.get('/', Event.findAll)
