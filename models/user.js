@@ -12,7 +12,8 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required: [true, 'Password is required']
+        required: [true, 'Password is required'],
+        minlength: [6, 'Minimum password length 6']
     },
     name: {
         type: String,
@@ -49,16 +50,21 @@ const userSchema = new Schema({
         },
         level: {
             type: Number,
-            min: 1,
-            max: 4
+            min: [1, 'Invalid skillset level value'],
+            max: [4, 'Invalid skillset level value']
         }
     }],
     summary: {
-        type: String
+        type: String,
+        default: ''
     },
     status: {
         type: String,
-        enum: ['locked', 'available']
+        enum: {
+            values: ['locked', 'available'],
+            message: 'Invalid status value'
+        },
+        default: 'available'
     },
     pict: {
         type: String,
@@ -71,8 +77,8 @@ const userSchema = new Schema({
         },
         rank: {
             type: Number,
-            min: 0,
-            max: 5
+            min: [0, 'Invalid review rank value'],
+            max: [5, 'Invalid review rank value']
         },
         comment: {
             type: String
