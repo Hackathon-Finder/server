@@ -8,15 +8,15 @@ class eventController {
             title,
             summary,
             team_size,
-            //ownerId: req.payload
-            ownerId,
-            date
+            date,
+            pictures
         } = req.body
         Event.create({
             title,
             summary,
             team_size,
-            ownerId,
+            ownerId: req.payload.userId,
+            pictures,
             date
         })
         .then(data=>{
@@ -49,7 +49,9 @@ class eventController {
         Event.findById({_id: req.params.eventId})
         .then(data=>{
             if(data.teams.includes(req.body.teamId)){
-                res.status(200).json({
+                console.log('sudah ada')
+                next({
+                    code: 400,
                     message: 'Team already added'
                 })
             }else{
@@ -76,7 +78,8 @@ class eventController {
                     $pull: { teams: req.body.teamId }
                 },{ new:true})
             }else{
-                res.status(200).json({
+                next({
+                    code: 400,
                     message: 'Team already removed'
                 })
             }
@@ -93,8 +96,9 @@ class eventController {
         Event.findById({_id: req.params.eventId})
         .then(data=>{
             if(data.applicants.includes(req.body.teamId)){
-                res.status(200).json({
-                    message: 'Team already added'
+                next({
+                    code: 400,
+                    message: 'Team already added to applicants'
                 })
             }else{
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
@@ -118,7 +122,8 @@ class eventController {
                     $pull: { applicants: req.body.teamId },
                 },{ new:true})
             }else{
-                res.status(200).json({
+                next({
+                    code: 400,
                     message: 'Team already removed from applicants'
                 })
             }

@@ -5,17 +5,14 @@ chai.use(chaiHttp)
 const expect = chai.expect
 const app = require('../app')
 const { Team, Event, User} = require('../models/index')
-var ownerid = null
-var teamid = null
-var eventid = null
-var token = null
-var teamOwnerId = null
+let ownerid,teamid,eventid,token,teamOwnerId
+let fakeid = '5e4fa2a00d99dd7e97f37be9'
+let fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZTJkNWViNzVkNzIyYjFjMGM5OWQyMzEiLCJuYW1lIjoidGVzIiwiZW1haWwiOiJ0ZXNAbWFpbC5jb20iLCJpYXQiOjE1ODAwMzE5NTd9.d6Ry9EJCgynNq3n1HHXOZFjkfynkriuAVVm2aMk9VF4'
 
 after(function(){
     return User.deleteMany({})
     .then(()=>{
         console.log('users cleaned up')
-        // done()
         return Event.deleteMany({})
     })
     .then(()=>{
@@ -50,8 +47,8 @@ before(function(){
             organization: '',
             role: 'user',
             password: 'secret',
-            name: 'nuel',
             email: 'nuel@mail.com',
+            name: 'nuel',
             hp: "087855727466",
             skillset: [],
             status: 'available',
@@ -95,7 +92,7 @@ describe("Event CRUD", function(){
                     title:'Hacktiv8',
                     summary:'lomba ngoding yang sangat seru',
                     team_size: 2,
-                    ownerId: ownerid,
+                    pictures:['https://picsum.photos/500'],
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -113,6 +110,186 @@ describe("Event CRUD", function(){
                     expect(res.body).to.have.property('teams')
                     expect(res.body).to.have.property('applicants')
                     expect(res.body).to.have.property('pictures')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error object with status code 400 caused by empty title", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'',
+                    summary:'lomba ngoding yang sangat seru',
+                    team_size: 2,
+                    pictures:['https://picsum.photos/500'],
+                    date:[new Date(), new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Event title is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error object with status code 400 caused by empty summary", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'title',
+                    summary:'',
+                    pictures:['https://picsum.photos/500'],
+                    team_size: 2,
+                    date:[new Date(), new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Event summary is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error object with status code 400 caused by empty team_size", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'title',
+                    pictures:['https://picsum.photos/500'],
+                    summary:'apapunlah',
+                    date:[new Date(), new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Team size is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error object with status code 400 caused by validation error min team_size", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'title',
+                    team_size: 0,
+                    summary:'apapunlah',
+                    pictures:['https://picsum.photos/500'],
+                    date:[new Date(), new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Minimum one team member')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error object with status code 400 caused by empty date", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'title',
+                    team_size: 2,
+                    pictures:['https://picsum.photos/500'],
+                    summary:'apapunlah',
+                    date: null
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Event start and end date is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error object with status code 400 caused by empty pictures", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'title',
+                    team_size: 2,
+                    summary:'apapunlah',
+                    date: [new Date(), new Date()],
+                    pictures: null
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Event picture is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error object with status code 401 caused by authentication error", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', fakeToken)
+                .send({
+                    title:'title',
+                    team_size: 2,
+                    pictures:['https://picsum.photos/500'],
+                    summary:'apapunlah',
+                    date: [new Date(), new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(401)
+                    expect(res.body.errors).to.equal('You need to login first')
                     done()
                 })
                 .catch(err=>{
@@ -139,7 +316,21 @@ describe("Event CRUD", function(){
                     expect(res.body[0]).to.have.property('teams')
                     expect(res.body[0]).to.have.property('applicants')
                     expect(res.body[0]).to.have.property('pictures')
-                    expect(res.body.length).to.equal(2)
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error with status 401", function(done){
+            chai
+                .request(app)
+                .get('/events')
+                .set('token', fakeToken)
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body.code).to.equal(401)
+                    expect(res.body.errors).to.equal('You need to login first')
                     done()
                 })
                 .catch(err=>{
@@ -166,6 +357,21 @@ describe("Event CRUD", function(){
                     expect(res.body).to.have.property('teams')
                     expect(res.body).to.have.property('applicants')
                     expect(res.body).to.have.property('pictures')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error with status 400", function(done){
+            chai
+                .request(app)
+                .get('/events/'+ fakeid)
+                .set('token', token)
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Event not found')
                     done()
                 })
                 .catch(err=>{
@@ -204,6 +410,36 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error with status 400", function(done){
+            chai
+                .request(app)
+                .put('/events/update/'+fakeid)
+                .set('token', token)
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Event not found')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error with status 403", function(done){
+            chai
+                .request(app)
+                .put('/events/update/'+eventid)
+                .set('token', fakeToken)
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body.code).to.equal(401)
+                    expect(res.body.errors).to.equal('You need to login first')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
     })
     describe("/PATCH update event's teams and applicants", function(){
         before(function(){
@@ -228,7 +464,6 @@ describe("Event CRUD", function(){
                 console.log(err)
             })
         })
-        //tambahin yang add applicants route
         it("add to applicants should return an object with status code 200", function(done){
             chai
                 .request(app)
@@ -248,6 +483,43 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("add to applicants should return an error with status code 400", function(done){
+            chai
+                .request(app)
+                .patch('/events/addapplicants/'+eventid)
+                .set('token', token)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Team already added to applicants')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("add to applicants should return an error with status code 400", function(done){
+            chai
+                .request(app)
+                .patch('/events/addapplicants/'+eventid)
+                .set('token', fakeToken)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(401)
+                    expect(res.body.errors).to.equal('You need to login first')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("add to teams should return an object with status code 200", function(done){
             chai
                 .request(app)
@@ -261,6 +533,24 @@ describe("Event CRUD", function(){
                     expect(res.body.data).to.be.an('object')
                     expect(res.body.data.teams.length).to.equal(1)
                     expect(res.body.data.applicants.length).to.equal(0)
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("add to teams should return an error with status code 400", function(done){
+            chai
+                .request(app)
+                .patch('/events/addteam/'+eventid)
+                .set('token', token)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Team already added')
                     done()
                 })
                 .catch(err=>{
