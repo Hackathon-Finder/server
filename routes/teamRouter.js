@@ -10,5 +10,6 @@ router.put('/update/:teamId', Team.update)
 router.patch('/addmember/:teamId', Team.addMember)
 router.patch('/deletemember/:teamId', Team.removeMember)
 router.delete('/:teamId', Team.deleteTeam)
+router.patch('/status/:teamId', Team.updateStatus)
 
 module.exports = router

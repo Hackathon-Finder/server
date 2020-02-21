@@ -108,6 +108,13 @@ class teamController {
             res.status(400).json(err)
         })
     }
+    static updateStatus(req,res,next){
+        Team.findByIdAndUpdate({_id: req.params.teamId}, {status: req.body.status}, { new: true })
+        .then(data=>{
+            res.status(200).json(data)
+        })
+        .catch()
+    }
 }
 
 module.exports = teamController
