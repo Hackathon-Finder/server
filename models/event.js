@@ -13,7 +13,6 @@ const eventSchema = new Schema({
     status:{
         type: String,
         enum: ['start','ongoing','end'],
-        required: true,
         default: 'start'
     },
     team_size: {

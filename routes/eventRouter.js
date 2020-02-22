@@ -12,6 +12,7 @@ router.get('/', Event.findAll)
 
 router.get('/:eventId', eventAuthorizaton, Event.findOne)
 router.put('/update/:eventId', eventAuthorizaton, Event.updateEvent)
+router.patch('/updatestatus/:eventId', eventAuthorizaton, Event.updateEventStatus)
 router.patch('/addteam/:eventId', eventAuthorizaton, Event.addTeam)
 router.patch('/removeteam/:eventId', eventAuthorizaton, Event.removeTeam)
 router.patch('/addapplicants/:eventId', eventAuthorizaton, Event.addApplicants)

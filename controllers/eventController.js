@@ -157,6 +157,13 @@ class eventController {
         })
         .catch(next)
     }
+    static updateEventStatus(req,res,next){
+        Event.findByIdAndUpdate({_id: req.params.eventId}, {status: req.body.status}, {new: true}).populate(['teams','ownerId','applicants'])
+        .then(data=>{
+            res.status(200).json(data)
+        })
+        .catch(next)
+    }
 }
 
 module.exports = eventController

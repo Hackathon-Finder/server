@@ -110,6 +110,7 @@ describe("Event CRUD", function(){
                     expect(res.body).to.have.property('teams')
                     expect(res.body).to.have.property('applicants')
                     expect(res.body).to.have.property('pictures')
+                    expect(res.body.date.length).to.equal(2)
                     done()
                 })
                 .catch(err=>{
@@ -587,6 +588,26 @@ describe("Event CRUD", function(){
                     expect(res.body.data).to.be.an('object')
                     expect(res.body.data.teams.length).to.equal(0)
                     expect(res.body.data.applicants.length).to.equal(0)
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+    })
+    describe("/PATCH update event status", function(){
+        it('should return an object with status code 200', function(done){
+            chai
+                .request(app)
+                .patch('/events/updatestatus/'+eventid)
+                .set('token', token)
+                .send({
+                    status: 'ongoing'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(200)
+                    expect(res.body.status).to.equal('ongoing')
+                    expect(res.body.title).to.equal('Loyal-Fox')
                     done()
                 })
                 .catch(err=>{
