@@ -9,7 +9,7 @@ const teamSchema = new Schema({
     ownerId:{
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: [true, 'Owner Id is required']
     },
     max_size: {
         required: [true, 'Maximum team size is required'],
@@ -21,7 +21,7 @@ const teamSchema = new Schema({
     },
     members:[{type: Schema.Types.ObjectId, ref: 'User'}],
     applicants:[{type: Schema.Types.ObjectId, ref: 'User'}],
-    skillset: [{
+    skillset:[{
         skill: {
             type: String
         }, 
@@ -40,7 +40,7 @@ const teamSchema = new Schema({
     eventId:{
         type: Schema.Types.ObjectId,
         ref: 'Event',
-        required: true
+        required: [true, 'Event id is required']
     }
 })
 
