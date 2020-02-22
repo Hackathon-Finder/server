@@ -18,7 +18,7 @@ const eventSchema = new Schema({
     },
     team_size: {
         type: Number,
-        required: [true, 'Team size is requires'],
+        required: [true, 'Team size is required'],
         min: [1, 'Minimum one team member'],
     },
     teams:[{type: Schema.Types.ObjectId, ref: 'Team'}],
@@ -30,8 +30,7 @@ const eventSchema = new Schema({
     },
     pictures:{
         type: Array,
-        required: [true, 'Event picture is required'],
-        default: ['https://picsum.photos/500']
+        required: [true, 'Event picture is required']
     },
     date:{
         type: Array,
