@@ -39,19 +39,17 @@ class eventController {
         .catch(next)
     }
     static updateEvent(req,res,next){
-        Event.findByIdAndUpdate({_id: req.params.eventId}, req.body,{new: true}).populate(['teams','ownerId'])
+        Event.findByIdAndUpdate({_id: req.params.eventId}, req.body,{new: true}).populate(['teams','ownerId','applicants'])
         .then(data=>{
             res.status(200).json(data)
         })
         .catch(next)
     }
     static addTeam(req,res,next){
-        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId','applicants'])
+        Event.findById({_id: req.params.eventId})
         .then(data=>{
-            for (let obj of data.teams){
-                if (String(obj._id) === req.body.teamId){
-                    return 'error'
-                }
+            if(data.teams.includes(req.body.teamId)){
+                return 'error'
             }
             return Event.findByIdAndUpdate({_id: req.params.eventId},{
                 $addToSet: { teams: req.body.teamId },
@@ -98,7 +96,7 @@ class eventController {
         .catch(next)
     }
     static addApplicants(req,res,next){
-        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
+        Event.findById({_id: req.params.eventId})
         .then(data=>{
             if(data.applicants.includes(req.body.teamId)){
                 return 'error'
@@ -126,20 +124,23 @@ class eventController {
         .catch(next)
     }
     static removeApplicants(req,res,next){
-        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
+        Event.findById({_id: req.params.eventId})
         .then(data=>{
             if(data.applicants.includes(req.body.teamId)){
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
                     $pull: { applicants: req.body.teamId },
                 },{ new:true}).populate(['teams','ownerId','applicants'])
             }else{
+                return 'error'
+            }
+        })
+        .then(data=>{
+            if(data==='error'){
                 next({
                     status: 400,
                     message: 'Team already removed from applicants'
                 })
             }
-        })
-        .then(data=>{
             res.status(200).json({
                 message: 'team remove from applicants',
                 data
