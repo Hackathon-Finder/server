@@ -98,7 +98,7 @@ class eventController {
         .catch(next)
     }
     static addApplicants(req,res,next){
-        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId','applicants'])
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
         .then(data=>{
             if(data.applicants.includes(req.body.teamId)){
                 return 'error'
@@ -126,7 +126,7 @@ class eventController {
         .catch(next)
     }
     static removeApplicants(req,res,next){
-        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId','applicants'])
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
         .then(data=>{
             if(data.applicants.includes(req.body.teamId)){
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
