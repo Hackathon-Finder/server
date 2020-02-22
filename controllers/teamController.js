@@ -50,7 +50,7 @@ class teamController {
         })
     }
     static addMember(req,res,next){
-        Team.findById({_id: req.params.teamId}).populate(['ownerId','members','applicants','eventId'])
+        Team.findById({_id: req.params.teamId})
         .then(team=>{
             if(team.members.includes(req.body.userId)){
                 res.status(200).json({
@@ -70,7 +70,7 @@ class teamController {
         .catch(next)
     }
     static removeMember(req,res,next){
-        Team.findById({_id: req.params.teamId}).populate(['ownerId','members','applicants','eventId'])
+        Team.findById({_id: req.params.teamId})
         .then(team=>{
             if(team.members.includes(req.body.userId)){
                 return Team.findByIdAndUpdate({_id: req.params.teamId},{
@@ -84,6 +84,7 @@ class teamController {
                 })
             }
         }).then(data=>{
+            console.log(data,'data')
             res.status(200).json(data)
         }).catch(next)
     }

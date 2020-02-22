@@ -265,7 +265,7 @@ describe("Team's CRUD", function(){
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
-                    expect(String(res.body.members[0])).to.equal(String(memberid))
+                    expect(String(res.body.members[0]._id)).to.equal(String(memberid))
                     expect(res.body.members.length).to.equal(1)
                     expect(res.body.applicants.length).to.equal(0)
                     done()
@@ -287,7 +287,7 @@ describe("Team's CRUD", function(){
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
-                    expect(String(res.body.applicants[0])).to.equal(String(memberid))
+                    expect(String(res.body.applicants[0]._id)).to.equal(String(memberid))
                     expect(res.body.members.length).to.equal(0)
                     expect(res.body.applicants.length).to.equal(1)
                     done()

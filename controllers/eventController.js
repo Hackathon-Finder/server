@@ -69,13 +69,13 @@ class eventController {
         .catch(next)
     }
     static removeTeam(req,res,next){
-        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
+        Event.findById({_id: req.params.eventId})
         .then(data=>{
             if(data.teams.includes(req.body.teamId)){
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
                     $addToSet: { applicants: req.body.teamId },
                     $pull: { teams: req.body.teamId }
-                },{ new:true}).populate({teams, ownerId})
+                },{ new:true}).populate(['teams','ownerId'])
             }else{
                 next({
                     code: 400,
