@@ -8,18 +8,14 @@ class teamController {
             name,
             ownerId: req.payload.userId,
             max_size,
-            team_size: 0,
-            members: [],
-            applicants: [],
             skillset,
-            status: 'open',
             eventId
         }).then(data=>{
             res.status(201).json(data)
         }).catch(next)
     }
     static findAll(req,res,next){
-        Team.find()
+        Team.find().populate(['ownerId','members','applicants','eventId'])
         .then(data=>{
             if(data.length>0){
                 res.status(200).json(data)
@@ -31,7 +27,7 @@ class teamController {
         }).catch(next)
     }
     static findOne(req,res,next){
-        Team.findById({_id: req.params.teamId})
+        Team.findById({_id: req.params.teamId}).populate(['ownerId','members','applicants','eventId'])
         .then(data=>{
             if(data){
                 res.status(200).json(data)
@@ -45,7 +41,7 @@ class teamController {
     static update(req,res,next){
         Team.findByIdAndUpdate({
             _id: req.params.teamId
-        },req.body,{ new: true })
+        },req.body,{ new: true }).populate(['ownerId','members','applicants','eventId'])
         .then(data=>{
             res.status(200).json(data)
         })
@@ -54,7 +50,7 @@ class teamController {
         })
     }
     static addMember(req,res,next){
-        Team.findById({_id: req.params.teamId})
+        Team.findById({_id: req.params.teamId}).populate(['ownerId','members','applicants','eventId'])
         .then(team=>{
             if(team.members.includes(req.body.userId)){
                 res.status(200).json({
@@ -65,7 +61,7 @@ class teamController {
                 return Team.findByIdAndUpdate({_id: req.params.teamId},{
                     $addToSet: { members: req.body.userId },
                     $pull: {applicants: req.body.userId}
-                }, { new: true })
+                }, { new: true }).populate(['ownerId','members','applicants','eventId'])
             }
         })
         .then(data=>{
@@ -74,13 +70,13 @@ class teamController {
         .catch(next)
     }
     static removeMember(req,res,next){
-        Team.findById({_id: req.params.teamId})
+        Team.findById({_id: req.params.teamId}).populate(['ownerId','members','applicants','eventId'])
         .then(team=>{
             if(team.members.includes(req.body.userId)){
                 return Team.findByIdAndUpdate({_id: req.params.teamId},{
                     $addToSet: { applicants: req.body.userId },
                     $pull: { members: req.body.userId },
-                }, { new: true })
+                }, { new: true }).populate(['ownerId','members','applicants','eventId'])
             }else{
                 res.status(200).json({
                     message: 'Member already removed',
@@ -99,7 +95,7 @@ class teamController {
         .catch(next)
     }
     static updateStatus(req,res,next){
-        Team.findByIdAndUpdate({_id: req.params.teamId}, {status: req.body.status}, { new: true })
+        Team.findByIdAndUpdate({_id: req.params.teamId}, {status: req.body.status}, { new: true }).populate(['ownerId','members','applicants','eventId'])
         .then(data=>{
             res.status(200).json(data)
         })

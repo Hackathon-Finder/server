@@ -25,31 +25,30 @@ class eventController {
         .catch(next)
     }
     static findAll(req,res,next){
-        Event.find()
+        Event.find().populate(['teams','ownerId'])
         .then(data=>{
             res.status(200).json(data)
         })
         .catch(next)
     }
     static findOne(req,res,next){
-        Event.findById({_id: req.params.eventId})
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
         .then(data=>{
             res.status(200).json(data)
         })
         .catch(next)
     }
     static updateEvent(req,res,next){
-        Event.findByIdAndUpdate({_id: req.params.eventId}, req.body,{new: true})
+        Event.findByIdAndUpdate({_id: req.params.eventId}, req.body,{new: true}).populate(['teams','ownerId'])
         .then(data=>{
             res.status(200).json(data)
         })
         .catch(next)
     }
     static addTeam(req,res,next){
-        Event.findById({_id: req.params.eventId})
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
         .then(data=>{
             if(data.teams.includes(req.body.teamId)){
-                console.log('sudah ada')
                 next({
                     code: 400,
                     message: 'Team already added'
@@ -58,7 +57,7 @@ class eventController {
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
                     $addToSet: { teams: req.body.teamId },
                     $pull: { applicants: req.body.teamId }
-                }, {new : true})
+                }, {new : true}).populate(['teams','ownerId'])
             }
         })
         .then(data=>{
@@ -70,13 +69,13 @@ class eventController {
         .catch(next)
     }
     static removeTeam(req,res,next){
-        Event.findById({_id: req.params.eventId})
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
         .then(data=>{
             if(data.teams.includes(req.body.teamId)){
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
                     $addToSet: { applicants: req.body.teamId },
                     $pull: { teams: req.body.teamId }
-                },{ new:true})
+                },{ new:true}).populate({teams, ownerId})
             }else{
                 next({
                     code: 400,
@@ -93,7 +92,7 @@ class eventController {
         .catch(next)
     }
     static addApplicants(req,res,next){
-        Event.findById({_id: req.params.eventId})
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
         .then(data=>{
             if(data.applicants.includes(req.body.teamId)){
                 next({
@@ -103,7 +102,7 @@ class eventController {
             }else{
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
                     $addToSet: { applicants: req.body.teamId },
-                },{ new:true})
+                },{ new:true}).populate(['teams','ownerId'])
             }
         })
         .then(data=>{
@@ -115,12 +114,12 @@ class eventController {
         .catch(next)
     }
     static removeApplicants(req,res,next){
-        Event.findById({_id: req.params.eventId})
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId'])
         .then(data=>{
             if(data.applicants.includes(req.body.teamId)){
                 return Event.findByIdAndUpdate({_id: req.params.eventId},{
                     $pull: { applicants: req.body.teamId },
-                },{ new:true})
+                },{ new:true}).populate(['teams','ownerId'])
             }else{
                 next({
                     code: 400,
