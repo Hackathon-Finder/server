@@ -53,10 +53,7 @@ class teamController {
         Team.findById({_id: req.params.teamId})
         .then(team=>{
             if(team.members.includes(req.body.userId)){
-                res.status(200).json({
-                    message: 'This user is already on your team',
-                    team
-                })
+                return 'error'
             }else{
                 return Team.findByIdAndUpdate({_id: req.params.teamId},{
                     $addToSet: { members: req.body.userId },
@@ -65,7 +62,14 @@ class teamController {
             }
         })
         .then(data=>{
-            res.status(200).json(data)
+            if(data==='error'){
+                next({
+                    status: 400,
+                    message: 'Team already added to members'
+                })
+            }else{
+                res.status(200).json(data)
+            }
         })
         .catch(next)
     }
@@ -78,13 +82,17 @@ class teamController {
                     $pull: { members: req.body.userId },
                 }, { new: true }).populate(['ownerId','members','applicants','eventId'])
             }else{
-                res.status(200).json({
-                    message: 'Member already removed',
-                    team
-                })
+                return 'error'
             }
         }).then(data=>{
-            res.status(200).json(data)
+            if(data==='error'){
+                next({
+                    status: 400,
+                    message: 'Team already removed from members'
+                })
+            }else{
+                res.status(200).json(data)
+            }
         }).catch(next)
     }
     static deleteTeam(req,res,next){
