@@ -9,6 +9,9 @@ var ownerid = ''
 var eventid = ''
 var memberid = ''
 var token=null
+let fakeid = '5e4fa2a00d99dd7e97f37be9'
+let fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZTJkNWViNzVkNzIyYjFjMGM5OWQyMzEiLCJuYW1lIjoidGVzIiwiZW1haWwiOiJ0ZXNAbWFpbC5jb20iLCJpYXQiOjE1ODAwMzE5NTd9.d6Ry9EJCgynNq3n1HHXOZFjkfynkriuAVVm2aMk9VF4'
+let fakeToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZTUwOTRhOTY5OTk5ZTBiNGRlMzYxZmUiLCJpYXQiOjE1ODIzMzkyNDJ9.T97L1-x-6GUz5UhC46rgUaFvP408OGizBEDRVAHRYYc'
 
 after(function(){
     return User.deleteMany({})
@@ -89,7 +92,6 @@ before(function(){
 
 describe("Team's CRUD", function(){
     let teamid=null
-    // inital login
     before(function(done){
         chai.request(app)
         .post('/users/login')
@@ -243,6 +245,22 @@ describe("Team's CRUD", function(){
                     done()
                 })
         })
+        it("should get an error with status code 401 Authentication error", function(done){
+            chai
+                .request(app)
+                .get('/teams')
+                .set('token', fakeToken)
+                .then(function(res){
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(401)
+                    expect(res.body.errors).to.equal('You need to login first')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        
     })
     describe("/GET get one team Success", function(){
         it('should send an object with status code 200', function(done){
@@ -263,6 +281,37 @@ describe("Team's CRUD", function(){
                     expect(res.body).to.have.property('applicants')
                     expect(res.body).to.have.property('status')
                     expect(res.body).to.have.property('eventId')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("it should get an error with status code 403 Not Authorized", function(done){
+            chai
+                .request(app)
+                .get('/teams/'+teamid)
+                .set('token', fakeToken2)
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should send an error with status code 400 No events found", function(done){
+            chai
+                .request(app)
+                .get('/teams/'+fakeid)
+                .set('token', token)
+                .then(function(res){
+                    console.log(res.body, 'fake')
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Team not found')
                     done()
                 })
                 .catch(err=>{
@@ -291,7 +340,29 @@ describe("Team's CRUD", function(){
                     expect(res.body.max_size).to.equal(10)
                     expect(res.body.skillset[0].skill).to.equal('Python')
                     expect(res.body.skillset[0].level).to.equal(4)
-                    // console.log(res,'===')
+                    done()
+                })
+                .catch(err=>{
+                    console.log('error update team', err)
+                })
+        })
+        it("should get an error with status code 403 Not Authorized", function(done){
+            chai
+                .request(app)
+                .put('/teams/update/'+teamid)
+                .set('token', fakeToken2)
+                .send({
+                    name: 'name update',
+                    max_size: 10,
+                    skillset: [{
+                        skill: 'Python',
+                        level: 4
+                    }]
+                })
+                .then(res=>{
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
                     done()
                 })
                 .catch(err=>{
@@ -313,6 +384,24 @@ describe("Team's CRUD", function(){
                     expect(res).to.have.status(200)
                     expect(res.body.status).to.equal('locked')
                     expect(res.body.name).to.equal('name update')
+                    done()
+                })
+                .catch(err=>{
+                    console.log('error update team', err)
+                })
+        })
+        it("should get an error with status code 403 Not Authorized", function(done){
+            chai
+                .request(app)
+                .patch('/teams/status/'+teamid)
+                .set('token', fakeToken2)
+                .send({
+                    status: 'locked'
+                })
+                .then(res=>{
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
                     done()
                 })
                 .catch(err=>{
@@ -341,6 +430,44 @@ describe("Team's CRUD", function(){
                     console.log('error update team', err)
                 })
         })
+        it('should send an error with status code 400', function(done){
+            chai
+                .request(app)
+                .patch('/teams/addmember/'+teamid)
+                .set('token', token)
+                .send({
+                    userId: memberid
+                })
+                .then(res=>{
+                    expect(res.body).to.be.an('object')
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Team already added to members')
+                    done()
+                })
+                .catch(err=>{
+                    console.log('error update team', err)
+                })
+        })
+        it('should send an error with status code 403', function(done){
+            chai
+                .request(app)
+                .patch('/teams/addmember/'+teamid)
+                .set('token', fakeToken2)
+                .send({
+                    userId: memberid
+                })
+                .then(res=>{
+                    expect(res.body).to.be.an('object')
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
     })
     describe("/PATCH update team remove a member Success", function(){
         it('should send an object with status code 200', function(done){
@@ -363,8 +490,62 @@ describe("Team's CRUD", function(){
                     console.log('error update team', err)
                 })
         })
+        it('should send an error with status code 400', function(done){
+            chai
+                .request(app)
+                .patch('/teams/removemember/'+teamid)
+                .set('token', token)
+                .send({
+                    userId: memberid
+                })
+                .then(res=>{
+                    expect(res.body).to.be.an('object')
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Team already removed from members')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it('should send an error with status code 403', function(done){
+            chai
+                .request(app)
+                .patch('/teams/removemember/'+teamid)
+                .set('token', fakeToken2)
+                .send({
+                    userId: memberid
+                })
+                .then(res=>{
+                    expect(res.body).to.be.an('object')
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
     })
     describe("/DELETE delete team Success", function(){
+        it('should send an error with status code 403', function(done){
+            chai
+                .request(app)
+                .delete('/teams/'+teamid)
+                .set('token', fakeToken2)
+                .then(res=>{
+                    expect(res.body).to.be.an('object')
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it('should send an object with status code 200', function(done){
             chai
                 .request(app)

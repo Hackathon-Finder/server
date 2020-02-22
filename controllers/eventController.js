@@ -140,11 +140,12 @@ class eventController {
                     status: 400,
                     message: 'Team already removed from applicants'
                 })
+            }else{
+                res.status(200).json({
+                    message: 'team remove from applicants',
+                    data
+                })
             }
-            res.status(200).json({
-                message: 'team remove from applicants',
-                data
-            })
         })
         .catch(next)
     }

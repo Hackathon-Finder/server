@@ -8,6 +8,7 @@ const { Team, Event, User} = require('../models/index')
 let ownerid,teamid,eventid,token,teamOwnerId
 let fakeid = '5e4fa2a00d99dd7e97f37be9'
 let fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZTJkNWViNzVkNzIyYjFjMGM5OWQyMzEiLCJuYW1lIjoidGVzIiwiZW1haWwiOiJ0ZXNAbWFpbC5jb20iLCJpYXQiOjE1ODAwMzE5NTd9.d6Ry9EJCgynNq3n1HHXOZFjkfynkriuAVVm2aMk9VF4'
+let fakeToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZTUwOTRhOTY5OTk5ZTBiNGRlMzYxZmUiLCJpYXQiOjE1ODIzMzkyNDJ9.T97L1-x-6GUz5UhC46rgUaFvP408OGizBEDRVAHRYYc'
 
 after(function(){
     return User.deleteMany({})
@@ -378,6 +379,21 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error with status 403 Not Authorized", function(done){
+            chai
+                .request(app)
+                .get('/events/'+eventid)
+                .set('token', fakeToken2)
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
     })
     describe("/PUT update event", function(){
         it("should return an object with status code 200", function(done){
@@ -409,6 +425,27 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error with status 403 Not Authorized", function(done){
+            chai
+                .request(app)
+                .put('/events/update/'+eventid)
+                .set('token', fakeToken2)
+                .send({
+                    title:'Loyal-Fox',
+                    summary:'lomba ngoding yang lumayan seru',
+                    team_size: 4,
+                    date:[new Date(), new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("should return an error with status 400", function(done){
             chai
                 .request(app)
@@ -424,7 +461,7 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
-        it("should return an error with status 403", function(done){
+        it("should return an error with status 401 User Not logged in", function(done){
             chai
                 .request(app)
                 .put('/events/update/'+eventid)
@@ -482,6 +519,24 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error with status 403 Not Authorized", function(done){
+            chai
+                .request(app)
+                .patch('/events/addapplicants/'+eventid)
+                .set('token', fakeToken2)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("add to applicants should return an error with status code 400", function(done){
             chai
                 .request(app)
@@ -500,7 +555,7 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
-        it("add to applicants should return an error with status code 400", function(done){
+        it("add to applicants should return an error with status code 401", function(done){
             chai
                 .request(app)
                 .patch('/events/addapplicants/'+eventid)
@@ -532,6 +587,24 @@ describe("Event CRUD", function(){
                     expect(res.body.data).to.be.an('object')
                     expect(res.body.data.teams.length).to.equal(1)
                     expect(res.body.data.applicants.length).to.equal(0)
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error with status 403 Not Authorized to add team", function(done){
+            chai
+                .request(app)
+                .patch('/events/addteam/'+eventid)
+                .set('token', fakeToken2)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
                     done()
                 })
                 .catch(err=>{
@@ -575,6 +648,24 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error with status 403 Not Authorized to remove team", function(done){
+            chai
+                .request(app)
+                .patch('/events/removeteam/'+eventid)
+                .set('token', fakeToken2)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("remove from applicants should return an object with status code 200", function(done){
             chai
                 .request(app)
@@ -588,6 +679,24 @@ describe("Event CRUD", function(){
                     expect(res.body.data).to.be.an('object')
                     expect(res.body.data.teams.length).to.equal(0)
                     expect(res.body.data.applicants.length).to.equal(0)
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error with status 403 Not Authorized to remove applicants", function(done){
+            chai
+                .request(app)
+                .patch('/events/removeapplicants/'+eventid)
+                .set('token', fakeToken2)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
                     done()
                 })
                 .catch(err=>{
@@ -614,8 +723,44 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error with status 403 Not Authorized to update event status", function(done){
+            chai
+                .request(app)
+                .patch('/events/updatestatus/'+eventid)
+                .set('token', fakeToken2)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
     })
     describe("/DELETE Delete Event", function(){
+        it("should return an error with status 403 Not Authorized to delete event", function(done){
+            chai
+                .request(app)
+                .delete('/events/delete/'+eventid)
+                .set('token', fakeToken2)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("should return an object with status code 200", function(done){
             chai
                 .request(app)
