@@ -113,11 +113,7 @@ describe("Team's CRUD", function(){
                 .set('token', token)
                 .send({
                     name: 'team',
-                    ownerId: ownerid,
                     max_size: 4,
-                    // team_size:Number,
-                    // members:[{type: Schema.Types.ObjectId, ref: 'User'}],
-                    // applicants:[{type: Schema.Types.ObjectId, ref: 'User'}],
                     skillset: [{
                         skill: 'JavaScript', 
                         level: 3
@@ -125,12 +121,6 @@ describe("Team's CRUD", function(){
                         skill: 'React Native', 
                         level: 2
                     }],
-                    // status: {
-                    //     required: [true, 'Team status is required'],
-                    //     type: String,
-                    //     enum: ['open', 'locked'],
-                    //     default: 'open'
-                    // },
                     eventId: eventid
                 })
                 .then(function(res){
@@ -147,6 +137,83 @@ describe("Team's CRUD", function(){
                     expect(res.body).to.have.property('applicants')
                     expect(res.body).to.have.property('status')
                     expect(res.body).to.have.property('eventId')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it('should send an error with status code 400 empty event id',function(done){
+            chai
+                .request(app)
+                .post('/teams')
+                .set('token', token)
+                .send({
+                    name: 'team',
+                    max_size: 4,
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors[0]).to.equal('Event id is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it('should send an error with status code 400 caused by empty max_size',function(done){
+            chai
+                .request(app)
+                .post('/teams')
+                .set('token', token)
+                .send({
+                    name: 'team',
+                    skillset: [{
+                        skill: 'JavaScript', 
+                        level: 3
+                    },{
+                        skill: 'React Native', 
+                        level: 2
+                    }],
+                    eventId: eventid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors[0]).to.equal('Maximum team size is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it('should send an error with status code 400 caused by empty name',function(done){
+            chai
+                .request(app)
+                .post('/teams')
+                .set('token', token)
+                .send({
+                    max_size: 4,
+                    skillset: [{
+                        skill: 'JavaScript', 
+                        level: 3
+                    },{
+                        skill: 'React Native', 
+                        level: 2
+                    }],
+                    eventId: eventid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors[0]).to.equal('Team name is required')
                     done()
                 })
                 .catch(err=>{

@@ -34,7 +34,16 @@ const eventSchema = new Schema({
     },
     date:{
         type: Array,
-        required: [true, 'Event start and end date is required']
+        required: [true, 'Event start and end date is required'],
+        validate:{
+            validator(v){
+                if(v.length == 2){
+                    return true
+                }
+                return false
+            },
+            message: 'Date must consist of start date and end date'
+        }
     }
 })
 
