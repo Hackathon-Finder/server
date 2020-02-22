@@ -84,7 +84,6 @@ class teamController {
                 })
             }
         }).then(data=>{
-            console.log(data,'data')
             res.status(200).json(data)
         }).catch(next)
     }
