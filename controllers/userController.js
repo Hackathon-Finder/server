@@ -33,7 +33,7 @@ class userController {
         let { email, password } = req.body
         User.findOne({
             email
-        })
+        }).select('+password')
             .then(result => {
                 if (!result) {
                     next({
@@ -120,7 +120,7 @@ class userController {
     }
 
     static findAllUser(req, res, next) {
-        User.find({ role: 'user' }, {password: 0})
+        User.find({ role: 'user' })
             .then(result => {
                 res.status(200).json(result)
             })
@@ -130,7 +130,7 @@ class userController {
     }
 
     static findOne(req,res,next){
-        User.findById(req.params.userId, {password: 0})
+        User.findById(req.params.userId)
         .then(result=>{
             if(!result){
                 next({
