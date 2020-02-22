@@ -18,25 +18,43 @@ class teamController {
         Team.find().populate(['ownerId','members','applicants','eventId'])
         .then(data=>{
             if(data.length>0){
-                res.status(200).json(data)
+                return data
             }else{
-                res.status(200).json({
-                    message: "No team in this event"
-                })
+                return 'error'
             }
-        }).catch(next)
+        })
+        .then(data=>{
+            if(data==='error'){
+                next({
+                    code: 400,
+                    message: 'No Events'
+                })
+            }else{
+                res.status(200).json(data)
+            }
+        })
+        .catch(next)
     }
     static findOne(req,res,next){
         Team.findById({_id: req.params.teamId}).populate(['ownerId','members','applicants','eventId'])
         .then(data=>{
             if(data){
-                res.status(200).json(data)
+                return data
             }else{
-                res.status(200).json({
-                    message: "Team does not exist"
-                })
+                return 'error'
             }
-        }).catch(next)
+        })
+        .then(data=>{
+            if(data==='error'){
+                next({
+                    code: 400,
+                    message: "Team not found"
+                })
+            }else{
+                res.status(200).json(data)
+            }
+        })
+        .catch(next)
     }
     static update(req,res,next){
         Team.findByIdAndUpdate({
