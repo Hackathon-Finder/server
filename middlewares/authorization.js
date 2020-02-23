@@ -62,7 +62,7 @@ function reviewAuthorization(req,res,next){
                 })
             }
             else {
-                if(data.members.include(req.params.id)){
+                if(data.members.includes(req.params.userId)){
                     next()
                 }
                 else {

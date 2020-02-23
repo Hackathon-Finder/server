@@ -105,14 +105,12 @@ class userController {
 
     static update(req, res, next) {
         let id = req.payload.userId
-        const { summary, status, pict, name, hp, skillset, review } = req.body
+        const { summary, status, pict, name, hp, skillset } = req.body
         User.findByIdAndUpdate(id, {
-            summary, status, pict, name, hp, skillset, review
-        }, { omitUndefined: true, runValidators: true })
-            .then(_ => {
-                res.status(200).json({
-                    message: 'Update success'
-                })
+            summary, status, pict, name, hp, skillset
+        }, { omitUndefined: true, runValidators: true, new: true })
+            .then(result => {
+                res.status(200).json(result)
             })
             .catch(err => {
                 next(err)
@@ -167,7 +165,25 @@ class userController {
             res.status(200).json(result)
         })
         .catch(err=>{
-            console.log(err);
+            next(err);
+        })
+    }
+
+    static updateReview(req,res,next){
+        User.findByIdAndUpdate(req.params.userId, {
+            $addToSet: {
+                review: {
+                    id_user: req.payload.userId,
+                    rank: req.body.rank,
+                    comment: req.body.comment
+                }
+            }
+        }, {new: true, runValidators: true}).populate('review.id_user')
+        .then(result=>{
+            res.status(200).json(result)
+        })
+        .catch(err=>{  
+            next(err)
         })
     }
 }
