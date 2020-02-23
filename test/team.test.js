@@ -308,7 +308,6 @@ describe("Team's CRUD", function(){
                 .get('/teams/'+fakeid)
                 .set('token', token)
                 .then(function(res){
-                    console.log(res.body, 'fake')
                     expect(res).to.have.status(400)
                     expect(res.body.code).to.equal(400)
                     expect(res.body.errors).to.equal('Team not found')

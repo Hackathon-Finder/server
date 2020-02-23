@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const Team = require('../models/team')
 
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -28,10 +29,12 @@ let loginData = {
 }
 
 let fakeToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZTJkNWViNzVkNzIyYjFjMGM5OWQyMzEiLCJuYW1lIjoidGVzIiwiZW1haWwiOiJ0ZXNAbWFpbC5jb20iLCJpYXQiOjE1ODAwMzE5NTd9.d6Ry9EJCgynNq3n1HHXOZFjkfynkriuAVVm2aMk9VF4'
+let intialUserToken
 let token
 let initialUserId
 let newUserId
 let fakeUserId = '5e4fa2a00d99dd7e97f37be9'
+let team
 
 before(function (done) {
     User.create({
@@ -297,11 +300,6 @@ describe('USER ROUTES', function () {
             skillset: [{
                 skill: 'javascript',
                 level: 3
-            }],
-            review: [{
-                id_user: initialUserId,
-                rank: 2,
-                comment: 'comment'
             }]
         }
         describe('success', function () {
@@ -314,8 +312,13 @@ describe('USER ROUTES', function () {
 
                         expect(res).to.have.status(200)
                         expect(res.body).to.be.an('object')
-                        expect(res.body).to.have.property('message')
-                        expect(res.body.message).to.equal('Update success')
+                        expect(res.body.hp).to.equal(updateData.hp)
+                        expect(res.body.summary).to.equal(updateData.summary)
+                        expect(res.body.status).to.equal(updateData.status)
+                        expect(res.body.pict).to.equal(updateData.pict)
+                        expect(res.body.name).to.equal(updateData.name)
+                        expect(res.body.skillset[0].skill).to.equal(updateData.skillset[0].skill)
+                        expect(res.body.skillset[0].level).to.equal(updateData.skillset[0].level)
 
                         done()
                     })
@@ -378,48 +381,6 @@ describe('USER ROUTES', function () {
                         expect(res.body).to.be.an('object')
                         expect(res.body.code).to.equal(400)
                         expect(res.body.errors[0]).to.equal('Invalid skillset level value')
-
-                        done()
-                    })
-            })
-            it('should return error with status code 400 caused review rank min validation error', function (done) {
-                const wrongRank = { ...updateData }
-                wrongRank.review = [{
-                    id_user: initialUserId,
-                    rank: -1,
-                    comment: 'comment'
-                }]
-                chai.request(app)
-                    .patch('/users')
-                    .set('token', token)
-                    .send(wrongRank)
-                    .then(function (res) {
-
-                        expect(res).to.have.status(400)
-                        expect(res.body).to.be.an('object')
-                        expect(res.body.code).to.equal(400)
-                        expect(res.body.errors[0]).to.equal('Invalid review rank value')
-
-                        done()
-                    })
-            })
-            it('should return error with status code 400 caused review rank max validation error', function (done) {
-                const wrongRank = { ...updateData }
-                wrongRank.review = [{
-                    id_user: initialUserId,
-                    rank: 6,
-                    comment: 'comment'
-                }]
-                chai.request(app)
-                    .patch('/users')
-                    .set('token', token)
-                    .send(wrongRank)
-                    .then(function (res) {
-
-                        expect(res).to.have.status(400)
-                        expect(res.body).to.be.an('object')
-                        expect(res.body.code).to.equal(400)
-                        expect(res.body.errors[0]).to.equal('Invalid review rank value')
 
                         done()
                     })
@@ -599,6 +560,200 @@ describe('USER ROUTES', function () {
             })
             .catch(err=>{
                 console.log(err);
+            })
+        })
+    })
+    describe('PATCH /users/review/:userId', function(){
+        before(function (done) {
+            let teamData = {
+                name: 'testteam',
+                ownerId: newUserId,
+                max_size: 2,
+                members: [initialUserId],
+                status: 'locked',
+                eventId: initialUserId
+            }
+            Team.create(teamData)
+                .then(result => {
+                    team = result
+                    console.log('team created')
+                    return chai.request(app)
+                    .post('/users/login')
+                    .send({
+                        email: 'user1@mail.com',
+                        password: 'secret1'
+                    })
+                })
+                .then(function (res) {
+                    intialUserToken = res.body.token
+                    done()
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        })
+        describe('success', function(){
+            it('should return updated user object with status 200', function(done){
+                chai.request(app)
+                .patch(`/users/review/${initialUserId}`)
+                .set('token', token)
+                .send({
+                    teamId: team._id,
+                    rank: 2,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(200)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('hp')
+                    expect(res.body).to.have.property('summary')
+                    expect(res.body).to.have.property('status')
+                    expect(res.body).to.have.property('pict')
+                    expect(res.body).to.have.property('_id')
+                    expect(res.body).to.have.property('name')
+                    expect(res.body).to.have.property('role')
+                    expect(res.body).to.have.property('email')
+                    expect(res.body).to.have.property('skillset')
+                    expect(res.body).to.have.property('review')
+                    expect(res.body).to.not.have.property('password')
+                    expect(res.body.review[0].rank).to.equal(2)
+                    expect(res.body.review[0].comment).to.equal('good')
+                    expect(res.body.review[0].id_user).to.be.an('object')
+                    expect(res.body.review[0].id_user).to.not.have.property('password')
+                    expect(res.body.review[0].id_user._id).to.equal(newUserId)
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);  
+                })
+            })
+        })
+        describe('error', function(){
+            it('should return error with status code 401 caused fake token authentication error', function(done){
+                chai.request(app)
+                .patch(`/users/review/${initialUserId}`)
+                .set('token', fakeToken)
+                .send({
+                    teamId: team._id,
+                    rank: 2,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(401)
+                    expect(res.body.errors).to.equal('You need to login first')
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 404 caused team not found', function(done){
+                chai.request(app)
+                .patch(`/users/review/${initialUserId}`)
+                .set('token', token)
+                .send({
+                    teamId: fakeUserId,
+                    rank: 2,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(404)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(404)
+                    expect(res.body.errors).to.equal('Team not found')
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 403 caused wrong team owner', function(done){
+                chai.request(app)
+                .patch(`/users/review/${initialUserId}`)
+                .set('token', intialUserToken)
+                .send({
+                    teamId: team._id,
+                    rank: 2,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 403 caused req params userId not a team member', function(done){
+                chai.request(app)
+                .patch(`/users/review/${newUserId}`)
+                .set('token', token)
+                .send({
+                    teamId: team._id,
+                    rank: 2,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(403)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(403)
+                    expect(res.body.errors).to.equal('Not Authorized')
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 400 caused review rank min validation error', function(done){
+                chai.request(app)
+                .patch(`/users/review/${initialUserId}`)
+                .set('token', token)
+                .send({
+                    teamId: team._id,
+                    rank: -1,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors[0]).to.equal('Validation failed: rank: Invalid review rank value')
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 400 caused review rank max validation error', function(done){
+                chai.request(app)
+                .patch(`/users/review/${initialUserId}`)
+                .set('token', token)
+                .send({
+                    teamId: team._id,
+                    rank: 6,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors[0]).to.equal('Validation failed: rank: Invalid review rank value')
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
             })
         })
     })

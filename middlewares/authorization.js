@@ -1,4 +1,4 @@
-const {Team,Event} = require('../models/index')
+const {Team,Event,User} = require('../models/index')
 
 function teamAuthorization(req,res,next){
     Team.findById({_id: req.params.teamId})
@@ -45,6 +45,37 @@ function eventAuthorizaton(req,res,next){
 
 }
 
+function reviewAuthorization(req,res,next){
+    Team.findById(req.body.teamId)
+    .then(data=>{
+        if(!data){
+            next({
+                status: 404,
+                message: 'Team not found'
+            })
+        }
+        else {
+            if(String(data.ownerId) !== String(req.payload.userId)){
+                next({
+                    status: 403,
+                    message: 'Not Authorized'
+                })
+            }
+            else {
+                if(data.members.includes(req.params.userId)){
+                    next()
+                }
+                else {
+                    next({
+                        status: 403,
+                        message: 'Not Authorized'
+                    })
+                }
+            }
+        }
+    })
+}
+
 module.exports = {
-    eventAuthorizaton,teamAuthorization
+    eventAuthorizaton,teamAuthorization, reviewAuthorization
 }
