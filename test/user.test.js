@@ -35,6 +35,7 @@ let initialUserId
 let newUserId
 let fakeUserId = '5e4fa2a00d99dd7e97f37be9'
 let team
+let userToInvite
 
 before(function (done) {
     User.create({
@@ -749,6 +750,130 @@ describe('USER ROUTES', function () {
                     expect(res.body.code).to.equal(400)
                     expect(res.body.errors[0]).to.equal('Validation failed: rank: Invalid review rank value')
 
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+        })
+    })
+    describe('POST /users/invite', function(){
+        before(function (done) {
+            User.create({
+                name: 'user3',
+                role: 'user',
+                password: 'secret3',
+                email: 'kennys.salam@gmail.com'
+            })
+            .then(data=>{
+                userToInvite = data
+                console.log('user to invite created');
+                done()
+            })
+            .catch(err=>{
+                console.log(err);
+            })
+        })
+        describe('success', function(){
+            it('should return message object with status code 200', function(done){
+                this.timeout(5000)
+                chai.request(app)
+                .post('/users/invite/')
+                .set('token', token)
+                .send({
+                    teamId: team._id,
+                    userId: userToInvite._id
+                })
+                .then(function(res){
+
+                    expect(res).to.have.status(200)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('message')
+                    expect(res.body.message).to.equal('Invitation email sent')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+        })
+        describe('error', function(){
+            it('should return error with status 401 caused fake token auth error', function(done){
+                chai.request(app)
+                .post('/users/invite/')
+                .set('token', fakeToken)
+                .send({
+                    teamId: team._id,
+                    userId: userToInvite._id
+                })
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('You need to login first')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status 404 caused team not found', function(done){
+                chai.request(app)
+                .post('/users/invite/')
+                .set('token', token)
+                .send({
+                    teamId: fakeUserId,
+                    userId: userToInvite._id
+                })
+                .then(function(res){
+                    expect(res).to.have.status(404)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('Team not found')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status 404 caused user not found', function(done){
+                chai.request(app)
+                .post('/users/invite/')
+                .set('token', token)
+                .send({
+                    teamId: team._id,
+                    userId: fakeUserId
+                })
+                .then(function(res){
+                    expect(res).to.have.status(404)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('User not found')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status 400 caused user not found', function(done){
+                chai.request(app)
+                .post('/users/invite/')
+                .set('token', token)
+                .send({
+                    teamId: team._id,
+                    userId: initialUserId
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('User already a member or applied to your team')
+                    
                     done()
                 })
                 .catch(err=>{
