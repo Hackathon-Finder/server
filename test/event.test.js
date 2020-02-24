@@ -348,7 +348,7 @@ describe("Event CRUD", function(){
         it("should return an object with status code 200", function(done){
             chai
                 .request(app)
-                .get('/events/'+eventid)
+                .get('/events/search/'+eventid)
                 .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(200)
@@ -368,10 +368,10 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
-        it("should return an error with status 400", function(done){
+        it("should return an error with status 400 Event not found", function(done){
             chai
                 .request(app)
-                .get('/events/'+ fakeid)
+                .get('/events/search/'+fakeid)
                 .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(400)
@@ -383,15 +383,33 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
-        it("should return an error with status 403 Not Authorized", function(done){
+    })
+    describe("/GET all events by owner", function(){
+        it("should return an object with status code 200", function(done){
             chai
                 .request(app)
-                .get('/events/'+eventid)
-                .set('token', fakeToken2)
+                .get('/events/owner')
+                .set('token', token)
                 .then(function(res){
-                    expect(res).to.have.status(403)
-                    expect(res.body.code).to.equal(403)
-                    expect(res.body.errors).to.equal('Not Authorized')
+                    expect(res).to.have.status(200)
+                    expect(res.body).to.be.an('array')
+                    expect(res.body.length).to.equal(1)
+                    expect(String(res.body[0].ownerId._id)).to.equal(String(ownerid))
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("should return an error with status code 400 Token Error", function(done){
+            chai
+                .request(app)
+                .get('/events/owner')
+                .set('token', fakeToken)
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body.code).to.equal(401)
+                    expect(res.body.errors).to.equal('You need to login first')
                     done()
                 })
                 .catch(err=>{
@@ -399,11 +417,11 @@ describe("Event CRUD", function(){
                 })
         })
     })
-    describe("/PUT update event", function(){
+    describe("/PATCH update event", function(){
         it("should return an object with status code 200", function(done){
             chai
                 .request(app)
-                .put('/events/update/'+eventid)
+                .patch('/events/update/'+eventid)
                 .set('token', token)
                 .send({
                     title:'Loyal-Fox',
@@ -431,10 +449,41 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an object with status code 200 with team_size null", function(done){
+            chai
+                .request(app)
+                .patch('/events/update/'+eventid)
+                .set('token', token)
+                .send({
+                    title:'Loyal',
+                    summary:undefined,
+                    team_size: undefined,
+                    date:[new Date(), new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(200)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body._id).to.equal(eventid)
+                    expect(res.body.title).to.equal('Loyal')
+                    expect(res.body.summary).to.equal('lomba ngoding yang lumayan seru')
+                    expect(res.body.team_size).to.equal(4)
+                    expect(res.body).to.have.property('date')
+                    expect(res.body.status).to.equal('open')
+                    expect(res.body).to.have.property('teams')
+                    expect(res.body.teams).to.be.an('array')
+                    expect(res.body.applicants).to.be.an('array')
+                    expect(res.body).to.have.property('applicants')
+                    expect(res.body).to.have.property('pictures')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("should return an error with status 403 Not Authorized", function(done){
             chai
                 .request(app)
-                .put('/events/update/'+eventid)
+                .patch('/events/update/'+eventid)
                 .set('token', fakeToken2)
                 .send({
                     title:'Loyal-Fox',
@@ -455,7 +504,7 @@ describe("Event CRUD", function(){
         it("should return an error with status 400", function(done){
             chai
                 .request(app)
-                .put('/events/update/'+fakeid)
+                .patch('/events/update/'+fakeid)
                 .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(400)
@@ -470,7 +519,7 @@ describe("Event CRUD", function(){
         it("should return an error with status 401 User Not logged in", function(done){
             chai
                 .request(app)
-                .put('/events/update/'+eventid)
+                .patch('/events/update/'+eventid)
                 .set('token', fakeToken)
                 .then(function(res){
                     expect(res).to.have.status(401)
@@ -722,7 +771,7 @@ describe("Event CRUD", function(){
                 .then(function(res){
                     expect(res).to.have.status(200)
                     expect(res.body.status).to.equal('open')
-                    expect(res.body.title).to.equal('Loyal-Fox')
+                    expect(res.body.title).to.equal('Loyal')
                     done()
                 })
                 .catch(err=>{
