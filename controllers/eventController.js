@@ -31,15 +31,49 @@ class eventController {
         })
         .catch(next)
     }
-    static findOne(req,res,next){
-        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId','applicants'])
+    static findByOwner(req,res,next){
+        Event.find({ownerId: req.payload.userId}).populate(['teams','ownerId','applicants'])
         .then(data=>{
             res.status(200).json(data)
         })
         .catch(next)
     }
+    static findOne(req,res,next){
+        Event.findById({_id: req.params.eventId}).populate(['teams','ownerId','applicants'])
+        .then(data=>{
+            if(data){
+                return data
+            }else{
+                return 'error'
+            }
+        })
+        .then(data=>{
+            if(data==='error'){
+                next({
+                    status: 400,
+                    message: "Event not found"
+                })
+            }else{
+                res.status(200).json(data)
+            }
+        })
+        .catch(next)
+    }
     static updateEvent(req,res,next){
-        Event.findByIdAndUpdate({_id: req.params.eventId}, req.body,{new: true}).populate(['teams','ownerId','applicants'])
+        const { 
+            title,
+            summary,
+            team_size,
+            date,
+            pictures
+        } = req.body
+        Event.findByIdAndUpdate({_id: req.params.eventId}, { 
+            title,
+            summary,
+            team_size,
+            date,
+            pictures
+        },{ omitUndefined: true, runValidators: true, new: true }).populate(['teams','ownerId','applicants'])
         .then(data=>{
             res.status(200).json(data)
         })
@@ -159,7 +193,10 @@ class eventController {
         .catch(next)
     }
     static updateEventStatus(req,res,next){
-        Event.findByIdAndUpdate({_id: req.params.eventId}, {status: req.body.status}, {new: true}).populate(['teams','ownerId','applicants'])
+        Event.findByIdAndUpdate(
+            {_id: req.params.eventId}, 
+            {status: req.body.status}, 
+            { omitUndefined: true, runValidators: true, new: true }).populate(['teams','ownerId','applicants'])
         .then(data=>{
             res.status(200).json(data)
         })
