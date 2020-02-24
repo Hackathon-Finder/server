@@ -1,7 +1,8 @@
 
-const { User } = require('../models')
+const { User, Team } = require('../models')
 const { generateToken } = require('../helpers/jwt')
 const { checkPassword } = require('../helpers/bcrypt')
+const sendMail = require('../helpers/inviteMailer')
 
 class userController {
     static register(req, res, next) {
@@ -183,6 +184,67 @@ class userController {
             res.status(200).json(result)
         })
         .catch(err=>{  
+            next(err)
+        })
+    }
+
+    static invite(req,res,next){ 
+        let teamData
+        Team.findById(req.body.teamId)
+        .then(team=>{   
+            if(!team){
+                next({
+                    status: 404,
+                    message: 'Team not found'
+                })
+            }
+            else {
+                if(team.members.includes(req.body.userId) || team.applicants.includes(req.body.userId)){
+                    next({
+                        status: 400,
+                        message: 'User already a member or applied to your team'
+                    })
+                }
+                else{
+                    teamData = team
+                    return User.findById(req.body.userId)
+                }
+            }
+        })
+        .then(user=>{       
+            if(!user){
+                next({
+                    status: 404,
+                    message: 'User not found'
+                })
+            }
+            else{
+                return sendMail({
+                    team: teamData.name,
+                    subject: 'Colabs Team Invitation',
+                    email: user.email
+                })
+            }
+        })
+        .then(result=>{        
+            if(result){  
+                if(result.hasOwnProperty('errors')){
+                    next({
+                        status: 500,
+                        message: 'Sending email error'
+                    })
+                }
+                if(result.accepted){
+                    res.status(200).json({
+                        message: 'Invitation email sent'
+                    })
+                }
+            }
+            else{
+                next()
+            }    
+        })
+        .catch(err=>{
             next(err)
         })
     }
