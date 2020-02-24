@@ -12,8 +12,8 @@ const eventSchema = new Schema({
     },
     status:{
         type: String,
-        enum: ['start','ongoing','end'],
-        default: 'start'
+        enum: ['open','started','ended'],
+        default: 'open'
     },
     team_size: {
         type: Number,
@@ -28,7 +28,7 @@ const eventSchema = new Schema({
         required: [true, 'Event owner id is required']
     },
     pictures:{
-        type: Array,
+        type: String,
         required: [true, 'Event picture is required']
     },
     date:{

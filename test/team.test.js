@@ -54,12 +54,12 @@ before(function(){
         return Event.create({
             title:'hackathon',
             summary:'sebuah lomba untuk developer',
-            status: 'start',
+            status: 'open',
             team_size: 2,
             teams:[],
             applicants:[],
             ownerId: ownerid,
-            pictures:['https://picsum.photos/500'],
+            pictures:'https://picsum.photos/500',
             date:[new Date(), new Date()]
         })
     })
