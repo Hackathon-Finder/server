@@ -99,7 +99,6 @@ describe("Event CRUD", function(){
                 .then(function(res){
                     eventid = res.body._id
                     expect(res).to.have.status(201)
-                    // console.log(res.body)
                     expect(res.body).to.be.an('object')
                     expect(res.body).to.have.property('_id')
                     expect(res.body).to.have.property('title')
@@ -348,7 +347,7 @@ describe("Event CRUD", function(){
         it("should return an object with status code 200", function(done){
             chai
                 .request(app)
-                .get('/events/search/'+eventid)
+                .get('/events/'+eventid)
                 .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(200)
@@ -371,7 +370,7 @@ describe("Event CRUD", function(){
         it("should return an error with status 400 Event not found", function(done){
             chai
                 .request(app)
-                .get('/events/search/'+fakeid)
+                .get('/events/'+fakeid)
                 .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(400)
