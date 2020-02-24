@@ -8,6 +8,9 @@
     "coverage": "nyc npm run test",
     "dev": "NODE_ENV=development nodemon app.js"
   },
+  "nyc": {
+    "exclude": ["middlewares/googleAuth.js"]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Hackathon-Finder/server.git"
