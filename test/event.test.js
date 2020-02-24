@@ -93,7 +93,7 @@ describe("Event CRUD", function(){
                     title:'Hacktiv8',
                     summary:'lomba ngoding yang sangat seru',
                     team_size: 2,
-                    pictures:['https://picsum.photos/500'],
+                    pictures:'https://picsum.photos/500',
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -105,11 +105,15 @@ describe("Event CRUD", function(){
                     expect(res.body).to.have.property('title')
                     expect(res.body).to.have.property('summary')
                     expect(res.body).to.have.property('team_size')
+                    expect(res.body.team_size).to.equal(2)
                     expect(res.body).to.have.property('ownerId')
                     expect(res.body).to.have.property('date')
                     expect(res.body).to.have.property('status')
+                    expect(res.body.status).to.equal('open')
                     expect(res.body).to.have.property('teams')
                     expect(res.body).to.have.property('applicants')
+                    expect(res.body.teams).to.be.an('array')
+                    expect(res.body.applicants).to.be.an('array')
                     expect(res.body).to.have.property('pictures')
                     expect(res.body.date.length).to.equal(2)
                     done()
@@ -127,7 +131,7 @@ describe("Event CRUD", function(){
                     title:'',
                     summary:'lomba ngoding yang sangat seru',
                     team_size: 2,
-                    pictures:['https://picsum.photos/500'],
+                    pictures:'https://picsum.photos/500',
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -152,7 +156,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'title',
                     summary:'',
-                    pictures:['https://picsum.photos/500'],
+                    pictures:'https://picsum.photos/500',
                     team_size: 2,
                     date:[new Date(), new Date()]
                 })
@@ -177,7 +181,7 @@ describe("Event CRUD", function(){
                 .set('token', token)
                 .send({
                     title:'title',
-                    pictures:['https://picsum.photos/500'],
+                    pictures:'https://picsum.photos/500',
                     summary:'apapunlah',
                     date:[new Date(), new Date()]
                 })
@@ -204,7 +208,7 @@ describe("Event CRUD", function(){
                     title:'title',
                     team_size: 0,
                     summary:'apapunlah',
-                    pictures:['https://picsum.photos/500'],
+                    pictures:'https://picsum.photos/500',
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -229,7 +233,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'title',
                     team_size: 2,
-                    pictures:['https://picsum.photos/500'],
+                    pictures:'https://picsum.photos/500',
                     summary:'apapunlah',
                     date: null
                 })
@@ -281,7 +285,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'title',
                     team_size: 2,
-                    pictures:['https://picsum.photos/500'],
+                    pictures:'https://picsum.photos/500',
                     summary:'apapunlah',
                     date: [new Date(), new Date()]
                 })
@@ -354,7 +358,7 @@ describe("Event CRUD", function(){
                     expect(res.body.summary).to.equal('lomba ngoding yang sangat seru')
                     expect(res.body.team_size).to.equal(2)
                     expect(res.body).to.have.property('date')
-                    expect(res.body.status).to.equal('start')
+                    expect(res.body.status).to.equal('open')
                     expect(res.body).to.have.property('teams')
                     expect(res.body).to.have.property('applicants')
                     expect(res.body).to.have.property('pictures')
@@ -415,8 +419,10 @@ describe("Event CRUD", function(){
                     expect(res.body.summary).to.equal('lomba ngoding yang lumayan seru')
                     expect(res.body.team_size).to.equal(4)
                     expect(res.body).to.have.property('date')
-                    expect(res.body.status).to.equal('start')
+                    expect(res.body.status).to.equal('open')
                     expect(res.body).to.have.property('teams')
+                    expect(res.body.teams).to.be.an('array')
+                    expect(res.body.applicants).to.be.an('array')
                     expect(res.body).to.have.property('applicants')
                     expect(res.body).to.have.property('pictures')
                     done()
@@ -711,11 +717,11 @@ describe("Event CRUD", function(){
                 .patch('/events/updatestatus/'+eventid)
                 .set('token', token)
                 .send({
-                    status: 'ongoing'
+                    status: 'open'
                 })
                 .then(function(res){
                     expect(res).to.have.status(200)
-                    expect(res.body.status).to.equal('ongoing')
+                    expect(res.body.status).to.equal('open')
                     expect(res.body.title).to.equal('Loyal-Fox')
                     done()
                 })

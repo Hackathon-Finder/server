@@ -4,14 +4,15 @@ const router = express.Router()
 const Event = require('../controllers/eventController')
 const authentication = require('../middlewares/authentication')
 const {eventAuthorizaton} = require('../middlewares/authorization')
+const upload = require('../middlewares/aws-upload')
 
 router.use('/', authentication)
 
-router.post('/', Event.create)
+router.post('/', upload.single('pictures'), Event.create)
 router.get('/', Event.findAll)
 
 router.get('/:eventId', eventAuthorizaton, Event.findOne)
-router.put('/update/:eventId', eventAuthorizaton, Event.updateEvent)
+router.put('/update/:eventId', eventAuthorizaton, upload.single('pictures'), Event.updateEvent)
 router.patch('/updatestatus/:eventId', eventAuthorizaton, Event.updateEventStatus)
 router.patch('/addteam/:eventId', eventAuthorizaton, Event.addTeam)
 router.patch('/removeteam/:eventId', eventAuthorizaton, Event.removeTeam)
