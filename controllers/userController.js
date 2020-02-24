@@ -106,9 +106,9 @@ class userController {
 
     static update(req, res, next) {
         let id = req.payload.userId
-        const { summary, status, pict, name, hp, skillset } = req.body
+        const { summary, status, pict, name, hp, skillset, subscribe } = req.body
         User.findByIdAndUpdate(id, {
-            summary, status, pict, name, hp, skillset
+            summary, status, pict, name, hp, skillset, subscribe
         }, { omitUndefined: true, runValidators: true, new: true })
             .then(result => {
                 res.status(200).json(result)

@@ -82,6 +82,7 @@ describe('USER ROUTES', function () {
                         expect(res.body.user).to.be.an('object')
                         expect(res.body.user).to.have.property('_id')
                         expect(res.body.user.summary).to.equal('')
+                        expect(res.body.user.subscribe).to.equal('unsub')
                         expect(res.body.user.hp).to.equal('')
                         expect(res.body.user.status).to.equal('available')
                         expect(res.body.user.pict).to.equal('https://picsum.photos/500')
@@ -236,6 +237,7 @@ describe('USER ROUTES', function () {
                         expect(res.body.user).to.be.an('object')
                         expect(res.body.user).to.have.property('_id')
                         expect(res.body.user.summary).to.equal('')
+                        expect(res.body.user.subscribe).to.equal('unsub')
                         expect(res.body.user.hp).to.equal('')
                         expect(res.body.user.status).to.equal('available')
                         expect(res.body.user.pict).to.equal('https://picsum.photos/500')
@@ -295,6 +297,7 @@ describe('USER ROUTES', function () {
         let updateData = {
             summary: 'summary',
             status: 'locked',
+            subscribe: 'subscribe',
             pict: 'http://image.img',
             name: 'test update',
             hp: '08123123123',
@@ -315,6 +318,7 @@ describe('USER ROUTES', function () {
                         expect(res.body).to.be.an('object')
                         expect(res.body.hp).to.equal(updateData.hp)
                         expect(res.body.summary).to.equal(updateData.summary)
+                        expect(res.body.subscribe).to.equal(updateData.subscribe)
                         expect(res.body.status).to.equal(updateData.status)
                         expect(res.body.pict).to.equal(updateData.pict)
                         expect(res.body.name).to.equal(updateData.name)
@@ -329,6 +333,23 @@ describe('USER ROUTES', function () {
             })
         })
         describe('error', function () {
+            it('should return error with status code 400 caused subscribe validation error', function (done) {
+                const wrongSubscribe = { ...updateData }
+                wrongSubscribe.subscribe = "aksdjaksdjaksd"
+                chai.request(app)
+                    .patch('/users')
+                    .set('token', token)
+                    .send(wrongSubscribe)
+                    .then(function (res) {
+
+                        expect(res).to.have.status(400)
+                        expect(res.body).to.be.an('object')
+                        expect(res.body.code).to.equal(400)
+                        expect(res.body.errors[0]).to.equal('Invalid subscribe value')
+
+                        done()
+                    })
+            })
             it('should return error with status code 400 caused status validation error', function (done) {
                 const wrongStatus = { ...updateData }
                 wrongStatus.status = "aksdjaksdjaksd"

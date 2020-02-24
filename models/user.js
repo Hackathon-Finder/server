@@ -10,6 +10,14 @@ const userSchema = new Schema({
         type: String,
         enum: ['user', 'organizer']
     },
+    subscribe: {
+        type: String,
+        enum: {
+            values: ['subscribe', 'unsub'],
+            message: 'Invalid subscribe value'
+        },
+        default: 'unsub'
+    },
     password: {
         type: String,
         required: [true, 'Password is required'],
