@@ -764,7 +764,7 @@ describe('USER ROUTES', function () {
                 name: 'user3',
                 role: 'user',
                 password: 'secret3',
-                email: 'kennys.salam@gmail.com'
+                email: 'tes@mail.com'
             })
             .then(data=>{
                 userToInvite = data
