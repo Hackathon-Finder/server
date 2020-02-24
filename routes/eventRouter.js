@@ -10,8 +10,8 @@ router.use('/', authentication)
 
 router.post('/', upload.single('pictures'), Event.create)
 router.get('/', Event.findAll)
-router.get('/search/:eventId', authentication, Event.findOne)
-router.get('/owner', authentication, Event.findByOwner)
+router.get('/owner', authentication, Event.findByOwner)//owner Id diambil dari token
+router.get('/:eventId', authentication, Event.findOne)
 
 router.patch('/update/:eventId', eventAuthorizaton, upload.single('pictures'), Event.updateEvent)
 router.patch('/updatestatus/:eventId', eventAuthorizaton, Event.updateEventStatus)
