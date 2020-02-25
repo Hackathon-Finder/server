@@ -93,9 +93,7 @@ class teamController {
         .then(data=>{
             res.status(200).json(data)
         })
-        .catch(err=>{
-            next(err)
-        })
+        .catch(next)
     }
     static addMember(req,res,next){
         Team.findById({_id: req.params.teamId})

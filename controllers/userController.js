@@ -25,9 +25,7 @@ class userController {
                     user
                 })
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static login(req, res, next) {
@@ -63,9 +61,7 @@ class userController {
                     }
                 }
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static loginToken(req,res,next){
@@ -81,45 +77,7 @@ class userController {
                 res.status(200).json({user})
             }
         })
-        .catch(err=>{
-            next(err)
-        })
-    }
-
-    static glogin(req,res,next){
-        let userData = {
-            name: req.payload.name,
-            email: req.payload.email,
-            pict: req.payload.picture,
-            password: process.env.DEFAULT_PASS,
-            role: req.body.role
-        }
-        User.findOne({
-            email: userData.email
-        })
-        .then(user=>{
-            if(user){
-                return user
-            }
-            else {
-                return User.create(userData)
-            }
-        })
-        .then(result=>{
-            let payload = {
-                userId: result._id
-            }
-            let token = generateToken(payload)
-            let user = { ...result._doc }
-            delete user.password
-            res.status(201).json({
-                token,
-                user
-            })
-        })
-        .catch(err=>{
-            next(err)
-        })
+        .catch(next)
     }
 
     static update(req, res, next) {
@@ -131,9 +89,7 @@ class userController {
             .then(result => {
                 res.status(200).json(result)
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static findAllUser(req, res, next) {
@@ -141,9 +97,7 @@ class userController {
             .then(result => {
                 res.status(200).json(result)
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static findOne(req,res,next){
@@ -159,9 +113,7 @@ class userController {
                 res.status(200).json(result)
             }
         })
-        .catch(err=>{
-            next(err)
-        })
+        .catch(next)
     }
 
     static findBySkill(req,res,next){
@@ -183,9 +135,7 @@ class userController {
         .then(result=>{
             res.status(200).json(result)
         })
-        .catch(err=>{
-            next(err);
-        })
+        .catch(next)
     }
 
     static updateReview(req,res,next){
@@ -201,9 +151,7 @@ class userController {
         .then(result=>{
             res.status(200).json(result)
         })
-        .catch(err=>{  
-            next(err)
-        })
+        .catch(next)
     }
 
     static invite(req,res,next){ 
@@ -262,9 +210,7 @@ class userController {
                 next()
             }    
         })
-        .catch(err=>{
-            next(err)
-        })
+        .catch(next)
     }
 }
 

@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 const unggah = require('unggah')
 
 const storage = unggah.s3({
@@ -10,4 +12,4 @@ const storage = unggah.s3({
     }
   })
 
-  module.exports = storage
+module.exports = storage

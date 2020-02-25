@@ -85,7 +85,6 @@ describe("Event CRUD", function(){
             })
         })
         .then(function(res){
-            console.log('user updated', res.body)
             done()
         })
         .catch(err=>{
