@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const Team = require('../models/team')
+const Event = require('../models/event')
 
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -36,6 +37,9 @@ let newUserId
 let fakeUserId = '5e4fa2a00d99dd7e97f37be9'
 let team
 let userToInvite
+let endedEvent
+let openEvent
+let teamEventOpen
 
 before(function (done) {
     User.create({
@@ -47,6 +51,30 @@ before(function (done) {
         .then(created => {
             initialUserId = created._id
             console.log('initial user created')
+            return Event.create({
+                title: 'ended',
+                summary: 'ended',
+                status: 'ended',
+                team_size: 2,
+                ownerId: created._id,
+                pictures: 'ended-img',
+                date: [new Date(), new Date()]
+            })
+        })
+        .then(event=>{
+            endedEvent = event
+            return Event.create({
+                title: 'open',
+                summary: 'open',
+                status: 'open',
+                team_size: 2,
+                ownerId: initialUserId,
+                pictures: 'open-img',
+                date: [new Date(), new Date()]
+            })
+        })
+        .then(eventopen=>{
+            openEvent = eventopen
             done()
         })
         .catch(err => {
@@ -593,7 +621,7 @@ describe('USER ROUTES', function () {
                 max_size: 2,
                 members: [initialUserId],
                 status: 'locked',
-                eventId: initialUserId
+                eventId: endedEvent._id
             }
             Team.create(teamData)
                 .then(result => {
@@ -608,6 +636,17 @@ describe('USER ROUTES', function () {
                 })
                 .then(function (res) {
                     intialUserToken = res.body.token
+                    return Team.create({
+                        name: 'testteam',
+                        ownerId: newUserId,
+                        max_size: 2,
+                        members: [initialUserId],
+                        status: 'locked',
+                        eventId: openEvent._id
+                    })
+                })
+                .then(data=>{
+                    teamEventOpen = data
                     done()
                 })
                 .catch(err => {
@@ -651,6 +690,27 @@ describe('USER ROUTES', function () {
             })
         })
         describe('error', function(){
+            it('should return error with status code 400 caused event not ended', function(done){
+                chai.request(app)
+                .patch(`/users/review/${initialUserId}`)
+                .set('token', token)
+                .send({
+                    teamId: teamEventOpen._id,
+                    rank: 2,
+                    comment: 'good'
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Event not yet ended')
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
             it('should return error with status code 401 caused fake token authentication error', function(done){
                 chai.request(app)
                 .patch(`/users/review/${initialUserId}`)
