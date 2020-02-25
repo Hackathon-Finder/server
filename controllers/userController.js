@@ -86,42 +86,6 @@ class userController {
         })
     }
 
-    static glogin(req,res,next){
-        let userData = {
-            name: req.payload.name,
-            email: req.payload.email,
-            pict: req.payload.picture,
-            password: process.env.DEFAULT_PASS,
-            role: req.body.role
-        }
-        User.findOne({
-            email: userData.email
-        })
-        .then(user=>{
-            if(user){
-                return user
-            }
-            else {
-                return User.create(userData)
-            }
-        })
-        .then(result=>{
-            let payload = {
-                userId: result._id
-            }
-            let token = generateToken(payload)
-            let user = { ...result._doc }
-            delete user.password
-            res.status(201).json({
-                token,
-                user
-            })
-        })
-        .catch(err=>{
-            next(err)
-        })
-    }
-
     static update(req, res, next) {
         let id = req.payload.userId
         const { summary, status, pict, name, hp, skillset, subscribe } = req.body
