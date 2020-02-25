@@ -1038,4 +1038,156 @@ describe('USER ROUTES', function () {
             })
         })
     })
+    describe('PATCH /users/skillset', function(){
+        describe('success', function(){
+            it('should return updated user object with status code 200', function(done){
+                chai.request(app)
+                .patch('/users/skillset')
+                .set('token', token)
+                .send({
+                    skill: 'javascript',
+                    questionId: '123456789',
+                    answer: 'answer',
+                    verifiedPoint: 80
+                })
+                .then(function(res){   
+                    expect(res).to.have.status(200)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('_id')
+                    expect(res.body).to.have.property('summary')
+                    expect(res.body).to.have.property('subscribe')
+                    expect(res.body).to.have.property('hp')
+                    expect(res.body).to.have.property('status')
+                    expect(res.body).to.have.property('pict')
+                    expect(res.body).to.have.property('name')
+                    expect(res.body).to.have.property('role')
+                    expect(res.body).to.have.property('email')
+                    expect(res.body).to.have.property('skillset')
+                    expect(res.body).to.have.property('review')
+                    expect(res.body).to.not.have.property('password')
+                    expect(res.body.skillset[0].skill).to.equal('javascript')
+                    expect(res.body.skillset[0].questionId).to.equal('123456789')
+                    expect(res.body.skillset[0].answer).to.equal('answer')
+                    expect(res.body.skillset[0].verifiedPoint).to.equal(80)
+
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+        })
+        describe('error', function(){
+            it('should return error with status code 401 caused fake token', function(done){
+                chai.request(app)
+                .patch('/users/skillset')
+                .set('token', fakeToken)
+                .send({
+                    skill: 'javascript',
+                    questionId: '123456789',
+                    answer: 'answer',
+                    verifiedPoint: 80
+                })
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('You need to login first')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 404 caused user not found', function(done){
+                chai.request(app)
+                .patch('/users/skillset')
+                .set('token', intialUserToken)
+                .send({
+                    skill: 'javascript',
+                    questionId: '123456789',
+                    answer: 'answer',
+                    verifiedPoint: 80
+                })
+                .then(function(res){
+                    expect(res).to.have.status(404)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('User not found')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 404 caused skill not found', function(done){
+                chai.request(app)
+                .patch('/users/skillset')
+                .set('token', token)
+                .send({
+                    skill: 'fakeskill',
+                    questionId: '123456789',
+                    answer: 'answer',
+                    verifiedPoint: 80
+                })
+                .then(function(res){   
+                    expect(res).to.have.status(404)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('Skill not found')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 400 caused invalid verifiedPoint min value', function(done){
+                chai.request(app)
+                .patch('/users/skillset')
+                .set('token', token)
+                .send({
+                    skill: 'javascript',
+                    questionId: '123456789',
+                    answer: 'answer',
+                    verifiedPoint: -1
+                })
+                .then(function(res){   
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors[0]).to.equal('Invalid verified point value')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status code 400 caused invalid verifiedPoint max value', function(done){
+                chai.request(app)
+                .patch('/users/skillset')
+                .set('token', token)
+                .send({
+                    skill: 'javascript',
+                    questionId: '123456789',
+                    answer: 'answer',
+                    verifiedPoint: 101
+                })
+                .then(function(res){   
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors[0]).to.equal('Invalid verified point value')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+        })
+    })
 })

@@ -138,6 +138,48 @@ class userController {
         .catch(next)
     }
 
+    static updateSkillset(req,res,next){
+        User.findById(req.payload.userId)
+        .then(user=>{
+            if(!user){
+                next({
+                    status: 404,
+                    message: 'User not found'
+                })
+            }
+            else {
+                let newSkillset = user.skillset
+                let editted = false
+                for(let obj of newSkillset){
+                    if(obj.skill === req.body.skill){
+                        editted = true
+                        obj.questionId = req.body.questionId
+                        obj.answer = req.body.answer
+                        obj.verifiedPoint = req.body.verifiedPoint
+                        break
+                    }
+                }
+                if(!editted){
+                    next({
+                        status: 404,
+                        message: 'Skill not found'
+                    })
+                }
+                else{
+                    return User.findByIdAndUpdate(req.payload.userId, {
+                        skillset: newSkillset
+                    }, { runValidators: true, new: true })
+                }
+            }
+        })
+        .then(updated=>{
+            res.status(200).json(updated)
+        })
+        .catch(err=>{
+            next(err)
+        })
+    }
+
     static updateReview(req,res,next){
         User.findByIdAndUpdate(req.params.userId, {
             $addToSet: {

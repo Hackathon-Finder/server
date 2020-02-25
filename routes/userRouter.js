@@ -14,6 +14,7 @@ router.post('/login', User.login)
 router.get('/login/token', authentication, User.loginToken)
 router.post('/invite', authentication, User.invite)
 router.patch('/', authentication, upload.single('pict'), User.update)
+router.patch('/skillset', authentication, User.updateSkillset)
 router.patch('/review/:userId', authentication, reviewAuthorization, User.updateReview)
 
 module.exports = router
