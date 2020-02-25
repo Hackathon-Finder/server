@@ -18,8 +18,8 @@ router.patch('/update/:teamId', teamAuthorization, Team.update)
 router.patch('/status/:teamId', teamAuthorization, Team.updateStatus)
 router.patch('/addmember/:teamId', teamAuthorization, Team.addMember)
 router.patch('/removemember/:teamId', teamAuthorization, Team.removeMember)
-router.patch('/addapplicant/:teamId', teamAuthorization, Team.addApplicant)
-router.patch('/removeapplicant/:teamId', teamAuthorization, Team.removeApplicant)
+router.patch('/addapplicant/:teamId', Team.addApplicant)//user id diambil dari token
+router.patch('/removeapplicant/:teamId', Team.removeApplicant)//user id diambil dari token
 router.delete('/:teamId', teamAuthorization, Team.deleteTeam)
 
 module.exports = router

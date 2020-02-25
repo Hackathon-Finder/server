@@ -123,7 +123,7 @@ class teamController {
             if(data==='error'){
                 next({
                     status: 400,
-                    message: 'Team already added to members'
+                    message: 'User already added to members'
                 })
             }else{
                 res.status(200).json(data)
@@ -134,11 +134,11 @@ class teamController {
     static addApplicant(req,res,next){
         Team.findById({_id: req.params.teamId})
         .then(team=>{
-            if(team.applicants.includes(req.body.userId)){
+            if(team.applicants.includes(req.payload.userId)){
                 return 'error'
             }else{
                 return Team.findByIdAndUpdate({_id: req.params.teamId},{
-                    $addToSet: { applicants: req.body.userId }
+                    $addToSet: { applicants: req.payload.userId }
                 }, { new: true }).populate(['ownerId','members','applicants','eventId'])
             }
         })
@@ -146,7 +146,7 @@ class teamController {
             if(data==='error'){
                 next({
                     status: 400,
-                    message: 'Team already added to applicants'
+                    message: 'User already added to applicants'
                 })
             }else{
                 res.status(200).json(data)
@@ -157,9 +157,9 @@ class teamController {
     static removeApplicant(req,res,next){
         Team.findById({_id: req.params.teamId})
         .then(team=>{
-            if(team.applicants.includes(req.body.userId)){
+            if(team.applicants.includes(req.payload.userId)){
                 return Team.findByIdAndUpdate({_id: req.params.teamId},{
-                    $pull: { applicants: req.body.userId }
+                    $pull: { applicants: req.payload.userId }
                 }, { new: true }).populate(['ownerId','members','applicants','eventId'])
             }else{
                 return 'error'
@@ -168,7 +168,7 @@ class teamController {
             if(data==='error'){
                 next({
                     status: 400,
-                    message: 'Team already removed from applicants'
+                    message: 'User already removed from applicants'
                 })
             }else{
                 res.status(200).json(data)
@@ -182,7 +182,7 @@ class teamController {
                 return Team.findByIdAndUpdate({_id: req.params.teamId},{
                     $addToSet: { applicants: req.body.userId },
                     $pull: { members: req.body.userId },
-                }, { new: true }).populate(['ownerId','members','applicants','eventId'])
+                }, { new: true })
             }else{
                 return 'error'
             }
@@ -199,7 +199,7 @@ class teamController {
             if(data==='error'){
                 next({
                     status: 400,
-                    message: 'Team already removed from members'
+                    message: 'User already removed from members'
                 })
             }else{
                 res.status(200).json(data)

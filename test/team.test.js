@@ -336,7 +336,7 @@ describe("Team's CRUD", function(){
                 })
         })
     })
-    describe("/PATCH update team Success", function(){
+    describe("/PATCH update team", function(){
         it('should send an object with status code 200', function(done){
             chai
                 .request(app)
@@ -449,19 +449,16 @@ describe("Team's CRUD", function(){
                 })
         })
     })
-    describe("/PATCH update team add an applicant Success", function(){
+    describe("/PATCH update team add an applicant", function(){
         it('should send an object with status code 200', function(done){
             chai
                 .request(app)
                 .patch('/teams/addapplicant/'+teamid)
                 .set('token', token)
-                .send({
-                    userId: memberid
-                })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
-                    expect(String(res.body.applicants[0]._id)).to.equal(String(memberid))
+                    expect(String(res.body.applicants[0]._id)).to.equal(String(ownerid))
                     expect(res.body.members.length).to.equal(0)
                     expect(res.body.applicants.length).to.equal(1)
                     done()
@@ -475,33 +472,11 @@ describe("Team's CRUD", function(){
                 .request(app)
                 .patch('/teams/addapplicant/'+teamid)
                 .set('token', token)
-                .send({
-                    userId: memberid
-                })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(400)
                     expect(res.body.code).to.equal(400)
-                    expect(res.body.errors).to.equal('Team already added to applicants')
-                    done()
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-        })
-        it('should send an error with status code 403', function(done){
-            chai
-                .request(app)
-                .patch('/teams/addapplicant/'+teamid)
-                .set('token', fakeToken2)
-                .send({
-                    userId: memberid
-                })
-                .then(res=>{
-                    expect(res.body).to.be.an('object')
-                    expect(res).to.have.status(403)
-                    expect(res.body.code).to.equal(403)
-                    expect(res.body.errors).to.equal('Not Authorized')
+                    expect(res.body.errors).to.equal('User already added to applicants')
                     done()
                 })
                 .catch(err=>{
@@ -513,14 +488,14 @@ describe("Team's CRUD", function(){
         it("should send an array with status code 200", function(done){
             chai
                 .request(app)
-                .get('/teams/applicant/'+memberid)
+                .get('/teams/applicant/'+ownerid)
                 .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('array')
                     expect(res.body.length).to.equal(1)
                     expect(String(res.body[0]._id)).to.equal(String(teamid))
-                    expect(String(res.body[0].applicants[0]._id)).to.equal(String(memberid))
+                    expect(String(res.body[0].applicants[0]._id)).to.equal(String(ownerid))
                     done()
                 })
                 .catch(err=>{
@@ -535,12 +510,12 @@ describe("Team's CRUD", function(){
                 .patch('/teams/addmember/'+teamid)
                 .set('token', token)
                 .send({
-                    userId: memberid
+                    userId: ownerid
                 })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
-                    expect(String(res.body.members[0]._id)).to.equal(String(memberid))
+                    expect(String(res.body.members[0]._id)).to.equal(String(ownerid))
                     expect(res.body.members.length).to.equal(1)
                     expect(res.body.applicants.length).to.equal(0)
                     expect(res.body.team_size).to.equal(1)
@@ -556,13 +531,13 @@ describe("Team's CRUD", function(){
                 .patch('/teams/addmember/'+teamid)
                 .set('token', token)
                 .send({
-                    userId: memberid
+                    userId: ownerid
                 })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(400)
                     expect(res.body.code).to.equal(400)
-                    expect(res.body.errors).to.equal('Team already added to members')
+                    expect(res.body.errors).to.equal('User already added to members')
                     done()
                 })
                 .catch(err=>{
@@ -575,7 +550,7 @@ describe("Team's CRUD", function(){
                 .patch('/teams/addmember/'+teamid)
                 .set('token', fakeToken2)
                 .send({
-                    userId: memberid
+                    userId: ownerid
                 })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
@@ -589,18 +564,18 @@ describe("Team's CRUD", function(){
                 })
         })
     })
-    describe("/GET get all teams where the User is an applicant", function(){
+    describe("/GET get all teams where the User is member", function(){
         it("should send an array with status code 200", function(done){
             chai
                 .request(app)
-                .get('/teams/member/'+memberid)
+                .get('/teams/member/'+ownerid)
                 .set('token', token)
                 .then(function(res){
                     expect(res).to.have.status(200)
                     expect(res.body).to.be.an('array')
                     expect(res.body.length).to.equal(1)
                     expect(String(res.body[0]._id)).to.equal(String(teamid))
-                    expect(String(res.body[0].members[0]._id)).to.equal(String(memberid))
+                    expect(String(res.body[0].members[0]._id)).to.equal(String(ownerid))
                     done()
                 })
                 .catch(err=>{
@@ -615,13 +590,14 @@ describe("Team's CRUD", function(){
                 .patch('/teams/removemember/'+teamid)
                 .set('token', token)
                 .send({
-                    userId: memberid
+                    userId: ownerid
                 })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
-                    expect(String(res.body.applicants[0]._id)).to.equal(String(memberid))
+                    expect(String(res.body.applicants[0]._id)).to.equal(String(ownerid))
                     expect(res.body.members.length).to.equal(0)
+                    expect(res.body.members[0]).to.not.equal(null)
                     expect(res.body.applicants.length).to.equal(1)
                     done()
                 })
@@ -641,7 +617,7 @@ describe("Team's CRUD", function(){
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(400)
                     expect(res.body.code).to.equal(400)
-                    expect(res.body.errors).to.equal('Team already removed from members')
+                    expect(res.body.errors).to.equal('User already removed from members')
                     done()
                 })
                 .catch(err=>{
@@ -674,9 +650,6 @@ describe("Team's CRUD", function(){
                 .request(app)
                 .patch('/teams/removeapplicant/'+teamid)
                 .set('token', token)
-                .send({
-                    userId: memberid
-                })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(200)
@@ -693,33 +666,11 @@ describe("Team's CRUD", function(){
                 .request(app)
                 .patch('/teams/removeapplicant/'+teamid)
                 .set('token', token)
-                .send({
-                    userId: memberid
-                })
                 .then(res=>{
                     expect(res.body).to.be.an('object')
                     expect(res).to.have.status(400)
                     expect(res.body.code).to.equal(400)
-                    expect(res.body.errors).to.equal('Team already removed from applicants')
-                    done()
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-        })
-        it('should send an error with status code 403 Not Authorized', function(done){
-            chai
-                .request(app)
-                .patch('/teams/removeapplicant/'+teamid)
-                .set('token', fakeToken2)
-                .send({
-                    userId: memberid
-                })
-                .then(res=>{
-                    expect(res.body).to.be.an('object')
-                    expect(res).to.have.status(403)
-                    expect(res.body.code).to.equal(403)
-                    expect(res.body.errors).to.equal('Not Authorized')
+                    expect(res.body.errors).to.equal('User already removed from applicants')
                     done()
                 })
                 .catch(err=>{
