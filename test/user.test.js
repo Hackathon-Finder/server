@@ -963,4 +963,79 @@ describe('USER ROUTES', function () {
             })
         })
     })
+    describe('GET /users/login/token', function(){
+        before(function (done) {
+            User.findByIdAndDelete(initialUserId)
+            .then(_=>{
+                done()
+            })
+            .catch(err=>{
+                console.log(err);
+            })
+        })
+        describe('success', function(){
+            it('should return user object with status code 200', function(done){
+                chai.request(app)
+                    .get('/users/login/token')
+                    .set('token',token)
+                    .then(function (res) {
+                        expect(res).to.have.status(200)
+                        expect(res.body).to.be.an('object')
+                        expect(res.body).to.have.property('user')
+                        expect(res.body.user).to.be.an('object')
+                        expect(res.body.user).to.have.property('_id')
+                        expect(res.body.user).to.have.property('summary')
+                        expect(res.body.user).to.have.property('subscribe')
+                        expect(res.body.user).to.have.property('hp')
+                        expect(res.body.user).to.have.property('status')
+                        expect(res.body.user).to.have.property('pict')
+                        expect(res.body.user).to.have.property('name')
+                        expect(res.body.user).to.have.property('role')
+                        expect(res.body.user).to.have.property('email')
+                        expect(res.body.user).to.have.property('skillset')
+                        expect(res.body.user).to.have.property('review')
+                        expect(res.body.user).to.not.have.property('password')
+                        
+                        done()
+                    })
+                    .catch(err=>{
+                        console.log(err);
+                    })
+            })
+        })
+        describe('error', function(){
+            it('should return error with status 401 caused fake token auth error', function(done){
+                chai.request(app)
+                .get('/users/login/token')
+                .set('token', fakeToken)
+                .then(function(res){
+                    expect(res).to.have.status(401)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('You need to login first')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+            it('should return error with status 404 caused user not found', function(done){
+                chai.request(app)
+                .get('/users/login/token')
+                .set('token', intialUserToken)
+                .then(function(res){
+                    expect(res).to.have.status(404)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.errors).to.equal('User not found')
+                    
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err);
+                })
+            })
+        })
+    })
 })

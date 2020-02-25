@@ -68,6 +68,24 @@ class userController {
             })
     }
 
+    static loginToken(req,res,next){
+        User.findById(req.payload.userId)
+        .then(user=>{
+            if(!user){
+                next({
+                    status: 404,
+                    message: "User not found"
+                })
+            }
+            else {
+                res.status(200).json({user})
+            }
+        })
+        .catch(err=>{
+            next(err)
+        })
+    }
+
     static glogin(req,res,next){
         let userData = {
             name: req.payload.name,
