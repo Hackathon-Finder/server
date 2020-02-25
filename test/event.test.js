@@ -232,6 +232,32 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error object with status code 400 caused by validation error min date array length", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'title',
+                    team_size: 2,
+                    summary:'apapunlah',
+                    pictures:'https://picsum.photos/500',
+                    date:[new Date()]
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Date must consist of start date and end date')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("should return an error object with status code 400 caused by empty date", function(done){
             chai
                 .request(app)
@@ -710,6 +736,25 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("remove from teams should return an error with status code 400 Team already removed from teams", function(done){
+            chai
+                .request(app)
+                .patch('/events/removeteam/'+eventid)
+                .set('token', token)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('team already removed from event')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("remove from applicants should return an object with status code 200", function(done){
             chai
                 .request(app)
@@ -723,6 +768,25 @@ describe("Event CRUD", function(){
                     expect(res.body.data).to.be.an('object')
                     expect(res.body.data.teams.length).to.equal(0)
                     expect(res.body.data.applicants.length).to.equal(0)
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
+        it("remove from applicants should return an error with status code 400 Team already removed from applicants", function(done){
+            chai
+                .request(app)
+                .patch('/events/removeapplicants/'+eventid)
+                .set('token', token)
+                .send({
+                    teamId: teamid
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal('Team already removed from applicants')
                     done()
                 })
                 .catch(err=>{

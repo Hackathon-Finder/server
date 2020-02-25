@@ -138,17 +138,21 @@ class eventController {
                     $pull: { teams: req.body.teamId }
                 },{ new:true}).populate(['teams','ownerId','applicants'])
             }else{
-                next({
-                    status: 400,
-                    message: 'Team already removed'
-                })
+                return 'error'
             }
         })
         .then(data=>{
-            res.status(200).json({
-                message: 'team removed from event',
-                data
-            })
+            if(data=='error'){
+                next({
+                    status: 400,
+                    message: 'team already removed from event'
+                })
+            }else{
+                res.status(200).json({
+                    message: 'team removed from event',
+                    data
+                })
+            }
         })
         .catch(next)
     }
@@ -199,7 +203,7 @@ class eventController {
                 })
             }else{
                 res.status(200).json({
-                    message: 'team remove from applicants',
+                    message: 'team removed from applicants',
                     data
                 })
             }
