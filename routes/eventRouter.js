@@ -15,10 +15,10 @@ router.get('/:eventId', authentication, Event.findOne)
 
 router.patch('/update/:eventId', eventAuthorizaton, upload.single('pictures'), Event.updateEvent)
 router.patch('/updatestatus/:eventId', eventAuthorizaton, Event.updateEventStatus)
-router.patch('/addteam/:eventId', eventAuthorizaton, Event.addTeam)
-router.patch('/removeteam/:eventId', eventAuthorizaton, Event.removeTeam)
-router.patch('/addapplicants/:eventId', eventAuthorizaton, Event.addApplicants)
-router.patch('/removeapplicants/:eventId', eventAuthorizaton, Event.removeApplicants)
+router.patch('/addteam/:eventId', eventAuthorizaton, Event.addTeam)//team id diambil dari req.body
+router.patch('/removeteam/:eventId', eventAuthorizaton, Event.removeTeam)//team id diambil dari req.body
+router.patch('/addapplicants/:eventId', Event.addApplicants)//team id diambil dari req.body
+router.patch('/removeapplicants/:eventId', Event.removeApplicants)//team id diambil dari req.body
 router.delete('/delete/:eventId', eventAuthorizaton, Event.deleteEvent)
 
 module.exports = router

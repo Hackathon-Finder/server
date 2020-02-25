@@ -1,9 +1,12 @@
 
-const { Event } = require('../models')
+const { Event, User } = require('../models')
+const kue = require('kue')
+const sendEmailNotif = require('../helpers/eventMailer')
+const queue = kue.createQueue()
 
 class eventController {
     static create(req,res,next){
-        //harusnya dapet owner id dari req.payload
+        let event=null
         const { 
             title,
             summary,
@@ -20,7 +23,27 @@ class eventController {
             date
         })
         .then(data=>{
-            res.status(201).json(data)
+            event = data
+            return User.find({subscribe: 'subscribe'})
+        })
+        .then(listUser=>{
+            listUser.forEach(element=>{
+                const job=queue
+                    .create('sendEmail', element)
+                    .save(function(err){
+                        if(err) console.log(err)
+                        else console.log('berhasil', job.id)
+                    })
+            })
+            queue.process('sendEmail', function(job, done){
+                sendEmailNotif({
+                    email: job.data.email,
+                    subject: 'New Colabs Event Available!',
+                    eventName: event.title,
+                })
+                done()
+            })
+            res.status(201).json(event)
         })
         .catch(next)
     }

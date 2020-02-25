@@ -77,6 +77,15 @@ describe("Event CRUD", function(){
         })
         .then(function(res){
             token = res.body.token
+            return chai.request(app)
+            .patch('/users')
+            .set('token', token)
+            .send({
+                subscribe: 'subscribe'
+            })
+        })
+        .then(function(res){
+            console.log('user updated', res.body)
             done()
         })
         .catch(err=>{
@@ -573,24 +582,6 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
-        it("should return an error with status 403 Not Authorized", function(done){
-            chai
-                .request(app)
-                .patch('/events/addapplicants/'+eventid)
-                .set('token', fakeToken2)
-                .send({
-                    teamId: teamid
-                })
-                .then(function(res){
-                    expect(res).to.have.status(403)
-                    expect(res.body.code).to.equal(403)
-                    expect(res.body.errors).to.equal('Not Authorized')
-                    done()
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-        })
         it("add to applicants should return an error with status code 400", function(done){
             chai
                 .request(app)
@@ -733,24 +724,6 @@ describe("Event CRUD", function(){
                     expect(res.body.data).to.be.an('object')
                     expect(res.body.data.teams.length).to.equal(0)
                     expect(res.body.data.applicants.length).to.equal(0)
-                    done()
-                })
-                .catch(err=>{
-                    console.log(err)
-                })
-        })
-        it("should return an error with status 403 Not Authorized to remove applicants", function(done){
-            chai
-                .request(app)
-                .patch('/events/removeapplicants/'+eventid)
-                .set('token', fakeToken2)
-                .send({
-                    teamId: teamid
-                })
-                .then(function(res){
-                    expect(res).to.have.status(403)
-                    expect(res.body.code).to.equal(403)
-                    expect(res.body.errors).to.equal('Not Authorized')
                     done()
                 })
                 .catch(err=>{
