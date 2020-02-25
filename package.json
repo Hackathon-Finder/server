@@ -10,7 +10,7 @@
   },
   "nyc": {
     "exclude": [
-      "middlewares/googleAuth.js"
+      "test"
     ]
   },
   "repository": {

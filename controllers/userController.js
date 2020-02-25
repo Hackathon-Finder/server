@@ -25,9 +25,7 @@ class userController {
                     user
                 })
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static login(req, res, next) {
@@ -63,9 +61,7 @@ class userController {
                     }
                 }
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static loginToken(req,res,next){
@@ -81,9 +77,7 @@ class userController {
                 res.status(200).json({user})
             }
         })
-        .catch(err=>{
-            next(err)
-        })
+        .catch(next)
     }
 
     static update(req, res, next) {
@@ -95,9 +89,7 @@ class userController {
             .then(result => {
                 res.status(200).json(result)
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static findAllUser(req, res, next) {
@@ -105,9 +97,7 @@ class userController {
             .then(result => {
                 res.status(200).json(result)
             })
-            .catch(err => {
-                next(err)
-            })
+            .catch(next)
     }
 
     static findOne(req,res,next){
@@ -123,9 +113,7 @@ class userController {
                 res.status(200).json(result)
             }
         })
-        .catch(err=>{
-            next(err)
-        })
+        .catch(next)
     }
 
     static findBySkill(req,res,next){
@@ -147,9 +135,7 @@ class userController {
         .then(result=>{
             res.status(200).json(result)
         })
-        .catch(err=>{
-            next(err);
-        })
+        .catch(next)
     }
 
     static updateReview(req,res,next){
@@ -165,9 +151,7 @@ class userController {
         .then(result=>{
             res.status(200).json(result)
         })
-        .catch(err=>{  
-            next(err)
-        })
+        .catch(next)
     }
 
     static invite(req,res,next){ 
@@ -226,9 +210,7 @@ class userController {
                 next()
             }    
         })
-        .catch(err=>{
-            next(err)
-        })
+        .catch(next)
     }
 }
 
