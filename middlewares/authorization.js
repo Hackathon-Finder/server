@@ -46,7 +46,7 @@ function eventAuthorizaton(req,res,next){
 }
 
 function reviewAuthorization(req,res,next){
-    Team.findById(req.body.teamId)
+    Team.findById(req.body.teamId).populate('eventId')
     .then(data=>{
         if(!data){
             next({
@@ -54,7 +54,13 @@ function reviewAuthorization(req,res,next){
                 message: 'Team not found'
             })
         }
-        else {
+        else { 
+            if(data.eventId.status !== 'ended'){
+                next({
+                    status: 400,
+                    message: 'Event not yet ended'
+                })
+            }
             if(String(data.ownerId) !== String(req.payload.userId)){
                 next({
                     status: 403,
