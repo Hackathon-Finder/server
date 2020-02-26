@@ -15,9 +15,9 @@ const eventSchema = new Schema({
         enum: ['open','started','ended'],
         default: 'open'
     },
-    team_size: {
+    max_size: {
         type: Number,
-        required: [true, 'Team size is required'],
+        required: [true, 'Max size is required'],
         min: [1, 'Minimum one team member'],
     },
     teams:[{type: Schema.Types.ObjectId, ref: 'Team'}],

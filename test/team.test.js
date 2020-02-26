@@ -55,7 +55,7 @@ before(function(){
             title:'hackathon',
             summary:'sebuah lomba untuk developer',
             status: 'open',
-            team_size: 2,
+            max_size: 2,
             teams:[],
             applicants:[],
             ownerId: ownerid,

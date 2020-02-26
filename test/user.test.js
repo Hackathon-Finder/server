@@ -55,7 +55,7 @@ before(function (done) {
                 title: 'ended',
                 summary: 'ended',
                 status: 'ended',
-                team_size: 2,
+                max_size: 2,
                 ownerId: created._id,
                 pictures: 'ended-img',
                 date: [new Date(), new Date()]
@@ -67,7 +67,7 @@ before(function (done) {
                 title: 'open',
                 summary: 'open',
                 status: 'open',
-                team_size: 2,
+                max_size: 2,
                 ownerId: initialUserId,
                 pictures: 'open-img',
                 date: [new Date(), new Date()]
