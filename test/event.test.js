@@ -102,7 +102,7 @@ describe("Event CRUD", function(){
                     summary:'lomba ngoding yang sangat seru',
                     max_size: 2,
                     pictures:'https://picsum.photos/500',
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     eventid = res.body._id
@@ -129,6 +129,32 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
+        it("should return an error with status code 400 empty date", function(done){
+            chai
+                .request(app)
+                .post('/events')
+                .set('token', token)
+                .send({
+                    title:'Hacktiv8',
+                    summary:'lomba ngoding yang sangat seru',
+                    max_size: 2,
+                    pictures:'https://picsum.photos/500',
+                    date: null
+                })
+                .then(function(res){
+                    expect(res).to.have.status(400)
+                    expect(res.body).to.be.an('object')
+                    expect(res.body).to.have.property('code')
+                    expect(res.body).to.have.property('errors')
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.be.an('array')
+                    expect(res.body.errors[0]).to.equal('Event start and end date is required')
+                    done()
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+        })
         it("should return an error object with status code 400 caused by empty title", function(done){
             chai
                 .request(app)
@@ -139,7 +165,7 @@ describe("Event CRUD", function(){
                     summary:'lomba ngoding yang sangat seru',
                     max_size: 2,
                     pictures:'https://picsum.photos/500',
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(400)
@@ -165,7 +191,7 @@ describe("Event CRUD", function(){
                     summary:'',
                     pictures:'https://picsum.photos/500',
                     max_size: 2,
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(400)
@@ -190,7 +216,7 @@ describe("Event CRUD", function(){
                     title:'title',
                     pictures:'https://picsum.photos/500',
                     summary:'apapunlah',
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(400)
@@ -216,7 +242,7 @@ describe("Event CRUD", function(){
                     max_size: 0,
                     summary:'apapunlah',
                     pictures:'https://picsum.photos/500',
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(400)
@@ -267,7 +293,7 @@ describe("Event CRUD", function(){
                     title:'title',
                     max_size: 2,
                     summary:'apapunlah',
-                    date: '2020-01-01,2020-01-02',
+                    date: [new Date(), new Date()],
                     pictures: null
                 })
                 .then(function(res){
@@ -294,7 +320,7 @@ describe("Event CRUD", function(){
                     max_size: 2,
                     pictures:'https://picsum.photos/500',
                     summary:'apapunlah',
-                    date: '2020-01-01,2020-01-02'
+                    date: [new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(401)
@@ -434,7 +460,7 @@ describe("Event CRUD", function(){
                     title:'Loyal-Fox',
                     summary:'lomba ngoding yang lumayan seru',
                     max_size: 4,
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(200)
@@ -465,7 +491,7 @@ describe("Event CRUD", function(){
                     title:'Loyal',
                     summary:undefined,
                     max_size: undefined,
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(200)
@@ -496,7 +522,7 @@ describe("Event CRUD", function(){
                     title:'Loyal-Fox',
                     summary:'lomba ngoding yang lumayan seru',
                     max_size: 4,
-                    date:'2020-01-01,2020-01-02'
+                    date:[new Date(), new Date()]
                 })
                 .then(function(res){
                     expect(res).to.have.status(403)
