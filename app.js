@@ -1,5 +1,5 @@
 
-
+/* istanbul ignore next */
 if (process.env.NODE_ENV) require('dotenv').config()
 
 //connect database
@@ -9,6 +9,7 @@ const express = require('express')
 const cors = require('cors')
 const routes = require('./routes')
 const errorHandler = require('./middlewares/errorHandler')
+/* istanbul ignore next */
 const PORT = process.env.NODE_ENV === 'testing' ? 4000 : process.env.PORT
 const app = express()
 

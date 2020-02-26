@@ -1,5 +1,6 @@
 
 module.exports = (err, req, res, next) => {
+    /* istanbul ignore next */
     if (process.env.NODE_ENV === 'development') console.log(err)
     let status
     let message
@@ -17,7 +18,9 @@ module.exports = (err, req, res, next) => {
             message = 'You need to login first'
             break;
         default:
+            /* istanbul ignore next */
             status = err.status || 500
+            /* istanbul ignore next */
             message =  err.message || err.msg || 'Internal Server Error'
             break;
     }
