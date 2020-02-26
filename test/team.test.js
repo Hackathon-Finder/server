@@ -363,6 +363,29 @@ describe("Team's CRUD", function(){
                     console.log('error update team', err)
                 })
         })
+        it('should send an error with status code 400 Team not found', function(done){
+            chai
+                .request(app)
+                .patch('/teams/update/'+fakeid)
+                .set('token', token)
+                .send({
+                    name: 'name update',
+                    max_size: 10,
+                    skillset: [{
+                        skill: 'Python',
+                        level: 4
+                    }]
+                })
+                .then(res=>{
+                    expect(res).to.have.status(400)
+                    expect(res.body.code).to.equal(400)
+                    expect(res.body.errors).to.equal("Team not found")
+                    done()
+                })
+                .catch(err=>{
+                    console.log('error update team', err)
+                })
+        })
         it('should send an object with status code 200', function(done){
             chai
                 .request(app)
