@@ -60,7 +60,7 @@ before(function(){
             applicants:[],
             ownerId: ownerid,
             pictures:'https://picsum.photos/500',
-            date:[new Date(), new Date()]
+            date: ['2020-01-01','2020-01-02']
         })
     })
     .then(result=>{
