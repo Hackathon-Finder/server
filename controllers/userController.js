@@ -32,7 +32,7 @@ class userController {
         let { email, password } = req.body
         User.findOne({
             email
-        }).select('+password')
+        }).select('+password').populate('review.id_user')
             .then(result => {
                 if (!result) {
                     next({
@@ -101,7 +101,7 @@ class userController {
     }
 
     static findOne(req,res,next){
-        User.findById(req.params.userId)
+        User.findById(req.params.userId).populate('review.id_user')
         .then(result=>{
             if(!result){
                 next({
