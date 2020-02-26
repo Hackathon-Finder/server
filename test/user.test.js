@@ -58,7 +58,7 @@ before(function (done) {
                 max_size: 2,
                 ownerId: created._id,
                 pictures: 'ended-img',
-                date: [new Date(), new Date()]
+                date: ['2020-01-01','2020-01-02']
             })
         })
         .then(event=>{
@@ -70,7 +70,7 @@ before(function (done) {
                 max_size: 2,
                 ownerId: initialUserId,
                 pictures: 'open-img',
-                date: [new Date(), new Date()]
+                date: ['2020-01-01','2020-01-02']
             })
         })
         .then(eventopen=>{

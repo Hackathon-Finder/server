@@ -14,13 +14,14 @@ class eventController {
             date,
             pictures
         } = req.body
+            let startEnd=date.split(',')
         Event.create({
             title,
             summary,
             max_size,
             ownerId: req.payload.userId,
             pictures,
-            date
+            date: startEnd
         })
         .then(data=>{
             event = data
@@ -90,11 +91,12 @@ class eventController {
             date,
             pictures
         } = req.body
+        const startend = date.split(',')
         Event.findByIdAndUpdate({_id: req.params.eventId}, { 
             title,
             summary,
             max_size,
-            date,
+            date: startend,
             pictures
         },{ omitUndefined: true, runValidators: true, new: true }).populate(['teams','ownerId','applicants'])
         .then(data=>{
