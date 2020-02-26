@@ -100,7 +100,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'Hacktiv8',
                     summary:'lomba ngoding yang sangat seru',
-                    team_size: 2,
+                    max_size: 2,
                     pictures:'https://picsum.photos/500',
                     date:[new Date(), new Date()]
                 })
@@ -111,8 +111,8 @@ describe("Event CRUD", function(){
                     expect(res.body).to.have.property('_id')
                     expect(res.body).to.have.property('title')
                     expect(res.body).to.have.property('summary')
-                    expect(res.body).to.have.property('team_size')
-                    expect(res.body.team_size).to.equal(2)
+                    expect(res.body).to.have.property('max_size')
+                    expect(res.body.max_size).to.equal(2)
                     expect(res.body).to.have.property('ownerId')
                     expect(res.body).to.have.property('date')
                     expect(res.body).to.have.property('status')
@@ -137,7 +137,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'',
                     summary:'lomba ngoding yang sangat seru',
-                    team_size: 2,
+                    max_size: 2,
                     pictures:'https://picsum.photos/500',
                     date:[new Date(), new Date()]
                 })
@@ -164,7 +164,7 @@ describe("Event CRUD", function(){
                     title:'title',
                     summary:'',
                     pictures:'https://picsum.photos/500',
-                    team_size: 2,
+                    max_size: 2,
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -181,7 +181,7 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
-        it("should return an error object with status code 400 caused by empty team_size", function(done){
+        it("should return an error object with status code 400 caused by empty max_size", function(done){
             chai
                 .request(app)
                 .post('/events')
@@ -199,21 +199,21 @@ describe("Event CRUD", function(){
                     expect(res.body).to.have.property('errors')
                     expect(res.body.code).to.equal(400)
                     expect(res.body.errors).to.be.an('array')
-                    expect(res.body.errors[0]).to.equal('Team size is required')
+                    expect(res.body.errors[0]).to.equal('Max size is required')
                     done()
                 })
                 .catch(err=>{
                     console.log(err)
                 })
         })
-        it("should return an error object with status code 400 caused by validation error min team_size", function(done){
+        it("should return an error object with status code 400 caused by validation error min max_size", function(done){
             chai
                 .request(app)
                 .post('/events')
                 .set('token', token)
                 .send({
                     title:'title',
-                    team_size: 0,
+                    max_size: 0,
                     summary:'apapunlah',
                     pictures:'https://picsum.photos/500',
                     date:[new Date(), new Date()]
@@ -239,7 +239,7 @@ describe("Event CRUD", function(){
                 .set('token', token)
                 .send({
                     title:'title',
-                    team_size: 2,
+                    max_size: 2,
                     summary:'apapunlah',
                     pictures:'https://picsum.photos/500',
                     date:[new Date()]
@@ -265,7 +265,7 @@ describe("Event CRUD", function(){
                 .set('token', token)
                 .send({
                     title:'title',
-                    team_size: 2,
+                    max_size: 2,
                     pictures:'https://picsum.photos/500',
                     summary:'apapunlah',
                     date: null
@@ -291,7 +291,7 @@ describe("Event CRUD", function(){
                 .set('token', token)
                 .send({
                     title:'title',
-                    team_size: 2,
+                    max_size: 2,
                     summary:'apapunlah',
                     date: [new Date(), new Date()],
                     pictures: null
@@ -317,7 +317,7 @@ describe("Event CRUD", function(){
                 .set('token', fakeToken)
                 .send({
                     title:'title',
-                    team_size: 2,
+                    max_size: 2,
                     pictures:'https://picsum.photos/500',
                     summary:'apapunlah',
                     date: [new Date(), new Date()]
@@ -348,7 +348,7 @@ describe("Event CRUD", function(){
                     expect(res.body[0]).to.have.property('_id')
                     expect(res.body[0]).to.have.property('title')
                     expect(res.body[0]).to.have.property('summary')
-                    expect(res.body[0]).to.have.property('team_size')
+                    expect(res.body[0]).to.have.property('max_size')
                     expect(res.body[0]).to.have.property('ownerId')
                     expect(res.body[0]).to.have.property('date')
                     expect(res.body[0]).to.have.property('status')
@@ -389,7 +389,7 @@ describe("Event CRUD", function(){
                     expect(res.body._id).to.equal(eventid)
                     expect(res.body.title).to.equal('Hacktiv8')
                     expect(res.body.summary).to.equal('lomba ngoding yang sangat seru')
-                    expect(res.body.team_size).to.equal(2)
+                    expect(res.body.max_size).to.equal(2)
                     expect(res.body).to.have.property('date')
                     expect(res.body.status).to.equal('open')
                     expect(res.body).to.have.property('teams')
@@ -459,7 +459,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'Loyal-Fox',
                     summary:'lomba ngoding yang lumayan seru',
-                    team_size: 4,
+                    max_size: 4,
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -468,7 +468,7 @@ describe("Event CRUD", function(){
                     expect(res.body._id).to.equal(eventid)
                     expect(res.body.title).to.equal('Loyal-Fox')
                     expect(res.body.summary).to.equal('lomba ngoding yang lumayan seru')
-                    expect(res.body.team_size).to.equal(4)
+                    expect(res.body.max_size).to.equal(4)
                     expect(res.body).to.have.property('date')
                     expect(res.body.status).to.equal('open')
                     expect(res.body).to.have.property('teams')
@@ -482,7 +482,7 @@ describe("Event CRUD", function(){
                     console.log(err)
                 })
         })
-        it("should return an object with status code 200 with team_size null", function(done){
+        it("should return an object with status code 200 with max_size null", function(done){
             chai
                 .request(app)
                 .patch('/events/update/'+eventid)
@@ -490,7 +490,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'Loyal',
                     summary:undefined,
-                    team_size: undefined,
+                    max_size: undefined,
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -499,7 +499,7 @@ describe("Event CRUD", function(){
                     expect(res.body._id).to.equal(eventid)
                     expect(res.body.title).to.equal('Loyal')
                     expect(res.body.summary).to.equal('lomba ngoding yang lumayan seru')
-                    expect(res.body.team_size).to.equal(4)
+                    expect(res.body.max_size).to.equal(4)
                     expect(res.body).to.have.property('date')
                     expect(res.body.status).to.equal('open')
                     expect(res.body).to.have.property('teams')
@@ -521,7 +521,7 @@ describe("Event CRUD", function(){
                 .send({
                     title:'Loyal-Fox',
                     summary:'lomba ngoding yang lumayan seru',
-                    team_size: 4,
+                    max_size: 4,
                     date:[new Date(), new Date()]
                 })
                 .then(function(res){
@@ -571,7 +571,7 @@ describe("Event CRUD", function(){
                 name: 'team',
                 ownerId: teamOwnerId,
                 max_size: 4,
-                team_size: 0,
+                max_size: 0,
                 members:[],
                 applicants:[],
                 skillset: [{

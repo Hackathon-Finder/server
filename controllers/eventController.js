@@ -10,14 +10,14 @@ class eventController {
         const { 
             title,
             summary,
-            team_size,
+            max_size,
             date,
             pictures
         } = req.body
         Event.create({
             title,
             summary,
-            team_size,
+            max_size,
             ownerId: req.payload.userId,
             pictures,
             date
@@ -86,14 +86,14 @@ class eventController {
         const { 
             title,
             summary,
-            team_size,
+            max_size,
             date,
             pictures
         } = req.body
         Event.findByIdAndUpdate({_id: req.params.eventId}, { 
             title,
             summary,
-            team_size,
+            max_size,
             date,
             pictures
         },{ omitUndefined: true, runValidators: true, new: true }).populate(['teams','ownerId','applicants'])
