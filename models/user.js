@@ -61,6 +61,17 @@ const userSchema = new Schema({
             type: Number,
             min: [1, 'Invalid skillset level value'],
             max: [4, 'Invalid skillset level value']
+        },
+        questionId: {
+            type: String
+        },
+        answer: {
+            type: String
+        },
+        verifiedPoint : {
+            type: Number,
+            min: [0, 'Invalid verified point value'],
+            max: [100, 'Invalid verified point value']
         }
     }],
     summary: {
