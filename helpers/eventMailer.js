@@ -14,7 +14,7 @@ function sendEmailNotif(payload){
         to: payload.email,
         subject: payload.subject,
         html: `<h4>New Event is available for you: ${payload.eventName}</h4>
-        <p>Click Here <link> to join or create team</p>`
+        <p>Click Here eventId: ${payload.eventId} to join or create team</p>`
     }
     return transporter.sendMail(mailOptions)
 }

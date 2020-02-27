@@ -31,8 +31,8 @@ class eventController {
                 const job=queue
                     .create('sendEmail', element)
                     .save(function(err){
+                        /* istanbul ignore next */
                         if(err) console.log(err)
-                        else console.log('berhasil', job.id)
                     })
             })
             queue.process('sendEmail', function(job, done){
@@ -40,6 +40,7 @@ class eventController {
                     email: job.data.email,
                     subject: 'New Colabs Event Available!',
                     eventName: event.title,
+                    eventId: event._id
                 })
                 done()
             })
