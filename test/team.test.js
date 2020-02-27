@@ -16,20 +16,15 @@ let fakeToken2 = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZTUwOTRhO
 after(function(){
     return User.deleteMany({})
     .then(()=>{
-        console.log('cleaned up')
-        // done()
         return Event.deleteMany({})
     })
     .then(()=>{
-        console.log('event cleaned up')
         return Team.deleteMany({})
     })
     .then(()=>{
-        console.log('Team cleaned up')
     })
     .catch(err=>{
         console.log(err)
-        // done()
     })
 })
 before(function(){
@@ -360,7 +355,7 @@ describe("Team's CRUD", function(){
                     done()
                 })
                 .catch(err=>{
-                    console.log('error update team', err)
+                    console.log(err)
                 })
         })
         it('should send an error with status code 400 Team not found', function(done){
@@ -383,7 +378,7 @@ describe("Team's CRUD", function(){
                     done()
                 })
                 .catch(err=>{
-                    console.log('error update team', err)
+                    console.log(err)
                 })
         })
         it('should send an object with status code 200', function(done){
@@ -406,7 +401,7 @@ describe("Team's CRUD", function(){
                     done()
                 })
                 .catch(err=>{
-                    console.log('error update team', err)
+                    console.log(err)
                 })
         })
         it("should get an error with status code 403 Not Authorized", function(done){
@@ -429,7 +424,7 @@ describe("Team's CRUD", function(){
                     done()
                 })
                 .catch(err=>{
-                    console.log('error update team', err)
+                    console.log(err)
                 })
         })
     })
@@ -450,7 +445,7 @@ describe("Team's CRUD", function(){
                     done()
                 })
                 .catch(err=>{
-                    console.log('error update team', err)
+                    console.log(err)
                 })
         })
         it("should get an error with status code 403 Not Authorized", function(done){
@@ -625,7 +620,7 @@ describe("Team's CRUD", function(){
                     done()
                 })
                 .catch(err=>{
-                    console.log('error update team', err)
+                    console.log(err)
                 })
         })
         it('should send an error with status code 400', function(done){
@@ -728,7 +723,7 @@ describe("Team's CRUD", function(){
                     done()
                 })
                 .catch(err=>{
-                    console.log('error update team', err)
+                    console.log(err)
                 })
         })
     })
