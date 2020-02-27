@@ -31,7 +31,6 @@ class eventController {
                 const job=queue
                     .create('sendEmail', element)
                     .save(function(err){
-                        /* istanbul ignore next */
                         if(err) console.log(err)
                     })
             })

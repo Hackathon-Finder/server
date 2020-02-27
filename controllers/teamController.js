@@ -57,7 +57,7 @@ class teamController {
             data.forEach(item=>{
                 team=item
                 team.applicants.forEach(item=>{
-                    /* istanbul ignore next */
+                    
                     if(item._id==req.params.userId){
                         list.push(team)
                     }
@@ -75,7 +75,6 @@ class teamController {
             data.forEach(item=>{
                 team=item
                 team.members.forEach(item=>{
-                    /* istanbul ignore next */
                     if(item._id==req.params.userId){
                         list.push(team)
                     }
