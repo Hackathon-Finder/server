@@ -236,14 +236,12 @@ class userController {
         })
         .then(result=>{        
             if(result){  
-                /* istanbul ignore next */
                 if(result.hasOwnProperty('errors')){
                     next({
                         status: 500,
                         message: 'Sending email error'
                     })
                 }
-                /* istanbul ignore next */
                 if(result.accepted){
                     res.status(200).json({
                         message: 'Invitation email sent'
