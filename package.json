@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=testing mocha --exit",
+    "test": "NODE_ENV=testing nyc mocha --exit",
     "coverage": "nyc npm run test",
     "dev": "NODE_ENV=development nodemon app.js"
   },

@@ -50,7 +50,6 @@ before(function (done) {
     })
         .then(created => {
             initialUserId = created._id
-            console.log('initial user created')
             return Event.create({
                 title: 'ended',
                 summary: 'ended',
@@ -85,7 +84,6 @@ before(function (done) {
 after(function (done) {
     User.deleteMany({})
         .then(_ => {
-            console.log('User cleared after testing');
             done()
         })
         .catch(err => {
@@ -474,7 +472,6 @@ describe('USER ROUTES', function () {
         before(function (done) {
             User.create(registerOrganizer)
                 .then(_ => {
-                    console.log('organizer created')
                     done()
                 })
                 .catch(err => {
@@ -569,7 +566,6 @@ describe('USER ROUTES', function () {
                 skillset
             }, { omitUndefined: true, runValidators: true })
                 .then(_ => {
-                    console.log('Initial user skillset updated')
                     done()
                 })
                 .catch(err => {
@@ -626,7 +622,6 @@ describe('USER ROUTES', function () {
             Team.create(teamData)
                 .then(result => {
                     team = result
-                    console.log('team created')
                     return chai.request(app)
                     .post('/users/login')
                     .send({
@@ -849,7 +844,6 @@ describe('USER ROUTES', function () {
             })
             .then(data=>{
                 userToInvite = data
-                console.log('user to invite created');
                 done()
             })
             .catch(err=>{
