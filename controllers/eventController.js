@@ -40,6 +40,7 @@ class eventController {
                     email: job.data.email,
                     subject: 'New Colabs Event Available!',
                     eventName: event.title,
+                    eventId: event._id
                 })
                 done()
             })
